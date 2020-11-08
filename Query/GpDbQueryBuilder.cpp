@@ -5,7 +5,7 @@ namespace GPlatform {
 GpArray<std::string, GpDbQueryValType::SCount().As<size_t>()>   GpDbQueryBuilder::sBindStrs
 {
     "::bigint",     //INT_64,
-    "::text",       //STRING_VALUE,
+    "",             //STRING_VALUE,::text
     "",             //STRING_NAME,
     "::jsonb",      //STRING_JSON,
     "::uuid",       //UUID,
@@ -76,6 +76,139 @@ GpDbQueryBuilder&   GpDbQueryBuilder::AND (void)
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::EQUAL (void)
+{
+    iQueryStr
+        .append("="_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::GREATER (void)
+{
+    iQueryStr
+        .append(">"_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::GREATER_EQUAL (void)
+{
+    iQueryStr
+        .append(">="_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::LESS (void)
+{
+    iQueryStr
+        .append("<"_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::LESS_EQUAL (void)
+{
+    iQueryStr
+        .append("<="_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::ASSIGN (void)
+{
+    iQueryStr
+        .append("="_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::ADD (void)
+{
+    iQueryStr
+        .append("+"_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::SUB (void)
+{
+    iQueryStr
+        .append("-"_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::COALESCE_BEGIN (void)
+{
+    iQueryStr
+        .append("COALESCE("_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::COALESCE_END (void)
+{
+    iQueryStr
+        .append(")"_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::DESC (void)
+{
+    iQueryStr
+        .append("DESC"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::NULLS (void)
+{
+    iQueryStr
+        .append("NULLS"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::LAST (void)
+{
+    iQueryStr
+        .append("LAST"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::ON (void)
+{
+    iQueryStr
+        .append("ON"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::BETWEEN (void)
+{
+    iQueryStr
+        .append("BETWEEN"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::BETWEEN (const GpDbQueryValType::EnumT aValueTypeA,
+                                               const GpDbQueryValType::EnumT aValueTypeB)
+{
+    BETWEEN().VALUE(aValueTypeA).AND().VALUE(aValueTypeB);
+
+    return *this;
+}
+
 GpDbQueryBuilder&   GpDbQueryBuilder::VALUES_BEGIN (void)
 {
     iQueryStr
@@ -140,10 +273,39 @@ GpDbQueryBuilder&   GpDbQueryBuilder::SET (void)
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::ORDER_BY (void)
+{
+    iQueryStr
+        .append("ORDER BY"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::LIMIT (const count_t aValue)
+{
+    iQueryStr
+        .append("LIMIT "_sv)
+        .append(GpStringOps::SToString(aValue))
+        .append(" "_sv);
+
+    return *this;
+}
+
 GpDbQueryBuilder&   GpDbQueryBuilder::RETURNING (void)
 {
     iQueryStr
         .append("RETURNING"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::INNER_JOIN (std::string_view aTableName)
+{
+    iQueryStr
+        .append("INNER JOIN "_sv)
+        .append(aTableName)
         .append(" "_sv);
 
     return *this;
@@ -176,25 +338,35 @@ GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const GpDbQueryValType::EnumT aValu
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::EQUAL (void)
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (std::string_view aValue)
 {
     iQueryStr
-        .append("="_sv);
+        .append(aValue)
+        .append(" "_sv);
 
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::ASSIGN (void)
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const SInt64 aValue)
 {
     iQueryStr
-        .append("="_sv);
+        .append(GpStringOps::SToString(aValue))
+        .append(" "_sv);
 
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_NAMES (const GpTypeStructInfo& aStructInfo)
+GpDbQueryBuilder&   GpDbQueryBuilder::RAW (std::string_view aStr)
 {
-    const auto info = SFromStructInfo(aStructInfo);
+    iQueryStr
+        .append(aStr);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_NAMES (const GpTypeStructInfo& aTypeInfo)
+{
+    const auto info = SFromTypeInfo(aTypeInfo);
 
     auto getFn = [](auto& i) -> std::string_view
     {
@@ -208,9 +380,9 @@ GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_NAMES (const GpTypeStructInfo
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_BINDS (const GpTypeStructInfo& aStructInfo)
+GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_BINDS (const GpTypeStructInfo& aTypeInfo)
 {
-    const auto info = SFromStructInfo(aStructInfo);
+    const auto info = SFromTypeInfo(aTypeInfo);
 
     auto getFn = [&](auto& i) -> std::string
     {
@@ -234,9 +406,9 @@ GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_BINDS (const GpTypeStructInfo
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_ASSIGN (const GpTypeStructInfo& aStructInfo)
+GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_ASSIGN (const GpTypeStructInfo& aTypeInfo)
 {
-    const auto info = SFromStructInfo(aStructInfo);
+    const auto info = SFromTypeInfo(aTypeInfo);
 
     auto getFn = [&](auto& i) -> std::string
     {
@@ -261,6 +433,13 @@ GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_ASSIGN (const GpTypeStructInf
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::INC_VERSION (void)
+{
+    PARAM_NAME("_version"_sv).ASSIGN().PARAM_NAME("_version"_sv).ADD().VALUE(1_s_int_64);
+
+    return *this;
+}
+
 std::string GpDbQueryBuilder::AddValueBind (const GpDbQueryValType::EnumT aValueType)
 {
     iValuesTypes.emplace_back(aValueType);
@@ -276,19 +455,19 @@ std::string GpDbQueryBuilder::AddValueBind (const GpDbQueryValType::EnumT aValue
     return res;
 }
 
-GpVector<GpDbQueryBuilder::StructInfo>  GpDbQueryBuilder::SFromStructInfo (const GpTypeStructInfo& aStructInfo)
+GpVector<GpDbQueryBuilder::TypeInfo>    GpDbQueryBuilder::SFromTypeInfo (const GpTypeStructInfo& aTypeInfo)
 {
-    GpVector<StructInfo> res;
+    GpVector<TypeInfo> res;
 
-    const auto&     props       = aStructInfo.Props();
+    const auto&     props       = aTypeInfo.Props();
     const size_t    propsCout   = props.size();
 
     res.reserve(propsCout);
 
-    for (const GpTypePropInfo& propInfo: aStructInfo.Props())
+    for (const GpTypePropInfo& propInfo: aTypeInfo.Props())
     {
         THROW_GPE_COND_CHECK_M(propInfo.Container() == GpTypeContainer::NO,
-                               "Container of property '"_sv + aStructInfo.Name() + "."_sv + propInfo.Name() + "' must be NO");
+                               "Container of property '"_sv + aTypeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO");
 
         std::string             valueBind;
         GpDbQueryValType::EnumT valueType;
@@ -322,7 +501,8 @@ GpVector<GpDbQueryBuilder::StructInfo>  GpDbQueryBuilder::SFromStructInfo (const
             case GpType::STRING:
             {
                 valueType   = GpDbQueryValType::STRING_VALUE;
-                valueBind   = "::text"_sv;
+                //valueBind = "::text"_sv;
+                valueBind   = ""_sv;
             } break;
             case GpType::BLOB:
             {

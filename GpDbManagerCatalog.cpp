@@ -31,7 +31,7 @@ void    GpDbManagerCatalog::InitFromConfig (const GpDbManagerCfgDesc::C::MapStr:
                                                                       cfg.ConnectionStr(),
                                                                       aMode);
 
-        dbManager.V().Init(0_cnt, cfg.MaxConnPoolSize());
+        dbManager->Init(0_cnt, cfg.MaxConnPoolSize());
 
         AddManager(dbManager);
     }

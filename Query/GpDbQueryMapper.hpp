@@ -14,6 +14,8 @@ class GPDBCLIENT_API GpDbQueryMapper
     CLASS_REMOVE_CTRS(GpDbQueryMapper)
 
 public:
+    static GpDbQueryMapperCache&    SMapperCache            (void) noexcept {return sMapperCache;}
+
     //*************************************** ROW **********************************************
 
     static void                 SInsertAsRow                (const GpTypeStructBase&    aStruct,
@@ -72,16 +74,19 @@ public:
                                                              const GpArray<std::string_view, sizeof...(KeysT)>& aKeysNames,
                                                              KeysT...                                           aKeysValues);
 
-private:
+    //*************************************** Utils **********************************************
+
     static void                 SWriteRowValues             (GpDbQuery&                 aDbQuery,
                                                              const GpTypeStructBase&    aStruct);
     static SInt64               SRowToVersion               (const GpDbQueryRes&    aDbQueryRes,
                                                              const count_t          aColOffset);
-    static void                 SRowToStruct                (const GpDbQueryRes&    aDbQueryRes,
+    static count_t              SRowToStruct                (const GpDbQueryRes&    aDbQueryRes,
                                                              GpTypeStructBase&      aStruct,
+                                                             const count_t          aRowId,
                                                              const count_t          aColOffset);
     static void                 SJsonToStruct               (GpDbQueryRes&          aDbQueryRes,
                                                              GpTypeStructBase&      aStruct,
+                                                             const count_t          aRowId,
                                                              const count_t          aColOffset);
 
 private:
@@ -97,17 +102,16 @@ SInt64  GpDbQueryMapper::SSelectByKeysAsRow (GpTypeStructBase&                  
 {
     constexpr GpArray<GpDbQueryValType::EnumT,sizeof...(KeysT)> VAL_T = {GpDbQueryBuilder::SDetectValType<KeysT>()...};
 
-    const GpDbQueryMapperCacheValue& cacheVal = sMapperCache.Get(aStruct.TypeStructInfo(),
-                                                                 "SSelectByKeysAsRow:"_sv + GpStringOps::SJoin<std::string_view>(aKeysNames, "|"_sv),
-                                                                 aTablePath,
-                                                                 [&](const GpTypeStructInfo& aStructInfo)
+    const GpDbQueryMapperCacheValue& cacheVal = sMapperCache.Get(aStruct.TypeInfo(),
+                                                                 "SSelectByKeysAsRow|"_sv + aTablePath + GpStringOps::SJoin<std::string_view>(aKeysNames, "|"_sv),
+                                                                 [&](const GpTypeStructInfo& aTypeInfo)
     {
         GpDbQueryBuilder builder;
 
         builder
             .SELECT()
                 .PARAM_NAME({"_version"_sv})
-                .COMMA().STRUCT_PARAM_NAMES(aStructInfo)
+                .COMMA().STRUCT_PARAM_NAMES(aTypeInfo)
             .FROM(aTablePath)
             .WHERE();
 
@@ -127,7 +131,7 @@ SInt64  GpDbQueryMapper::SSelectByKeysAsRow (GpTypeStructBase&                  
 
     //Read
     const SInt64 version = SRowToVersion(dbQueryRes.VCn(), 0_cnt);
-    SRowToStruct(dbQueryRes.VCn(), aStruct, 1_cnt);
+    SRowToStruct(dbQueryRes.VCn(), aStruct, 0_cnt, 1_cnt);
 
     return version;
 }
@@ -154,18 +158,17 @@ void    GpDbQueryMapper::SUpdateByKeysAsRow (const GpTypeStructBase&            
 {
     constexpr GpArray<GpDbQueryValType::EnumT,sizeof...(KeysT)> VAL_T = {GpDbQueryBuilder::SDetectValType<KeysT>()...};
 
-    const GpDbQueryMapperCacheValue& cacheVal = sMapperCache.Get(aStruct.TypeStructInfo(),
-                                                                 "SUpdateByKeysAsRow:"_sv + GpStringOps::SJoin<std::string_view>(aKeysNames, "|"_sv),
-                                                                 aTablePath,
-                                                                 [&](const GpTypeStructInfo& aStructInfo)
+    const GpDbQueryMapperCacheValue& cacheVal = sMapperCache.Get(aStruct.TypeInfo(),
+                                                                 "SUpdateByKeysAsRow|"_sv + aTablePath + GpStringOps::SJoin<std::string_view>(aKeysNames, "|"_sv),
+                                                                 [&](const GpTypeStructInfo& aTypeInfo)
     {
         GpDbQueryBuilder builder;
 
         builder
             .UPDATE(aTablePath)
             .SET()
-                .STRUCT_PARAM_ASSIGN(aStructInfo)
-                .COMMA().PARAM_NAME("_version"_sv).ASSIGN().VALUE(GpDbQueryValType::INT_64)
+                .STRUCT_PARAM_ASSIGN(aTypeInfo)
+                .COMMA().INC_VERSION()
             .WHERE();
                 for (size_t id = 0; id < sizeof...(KeysT); ++id)
                 {
@@ -181,7 +184,6 @@ void    GpDbQueryMapper::SUpdateByKeysAsRow (const GpTypeStructBase&            
 
     GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
     SWriteRowValues(dbQuery, aStruct);
-    dbQuery.NextInt64(aVersion + 1_s_int_64);
     dbQuery.Nexts<KeysT...>(std::forward<KeysT...>(aKeysValues...));
     dbQuery.NextInt64(aVersion);
     aDbConn.Execute(dbQuery, 1_cnt);
@@ -196,10 +198,9 @@ SInt64  GpDbQueryMapper::SSelectByKeysAsJsonb (GpTypeStructBase&                
 {
     constexpr GpArray<GpDbQueryValType::EnumT,sizeof...(KeysT)> VAL_T = {GpDbQueryBuilder::SDetectValType<KeysT>()...};
 
-    const GpDbQueryMapperCacheValue& cacheVal = sMapperCache.Get(aStruct.TypeStructInfo(),
-                                                                 "SSelectByKeysAsJsonb:"_sv + GpStringOps::SJoin<std::string_view>(aKeysNames, "|"_sv),
-                                                                 aTablePath,
-                                                                 [&](const GpTypeStructInfo& /*aStructInfo*/)
+    const GpDbQueryMapperCacheValue& cacheVal = sMapperCache.Get(aStruct.TypeInfo(),
+                                                                 "SSelectByKeysAsJsonb|"_sv + aTablePath + GpStringOps::SJoin<std::string_view>(aKeysNames, "|"_sv),
+                                                                 [&](const GpTypeStructInfo&)
     {
         GpDbQueryBuilder builder;
 
@@ -226,7 +227,7 @@ SInt64  GpDbQueryMapper::SSelectByKeysAsJsonb (GpTypeStructBase&                
 
     //Read
     const SInt64 version = SRowToVersion(dbQueryRes.VCn(), 0_cnt);
-    SJsonToStruct(dbQueryRes.Vn(), aStruct, 1_cnt);
+    SJsonToStruct(dbQueryRes.Vn(), aStruct, 0_cnt, 1_cnt);
 
     return version;
 }
@@ -254,10 +255,9 @@ void    GpDbQueryMapper::SUpdateByKeysAsJsonb (const GpTypeStructBase&          
 {
     constexpr GpArray<GpDbQueryValType::EnumT,sizeof...(KeysT)> VAL_T = {GpDbQueryBuilder::SDetectValType<KeysT>()...};
 
-    const GpDbQueryMapperCacheValue& cacheVal = sMapperCache.Get(aStruct.TypeStructInfo(),
-                                                                 "SUpdateByKeysAsJsonb:"_sv + GpStringOps::SJoin<std::string_view>(aKeysNames, "|"_sv),
-                                                                 aTablePath,
-                                                                 [&](const GpTypeStructInfo& /*aStructInfo*/)
+    const GpDbQueryMapperCacheValue& cacheVal = sMapperCache.Get(aStruct.TypeInfo(),
+                                                                 "SUpdateByKeysAsJsonb|"_sv + aTablePath + GpStringOps::SJoin<std::string_view>(aKeysNames, "|"_sv),
+                                                                 [&](const GpTypeStructInfo&)
     {
         GpDbQueryBuilder builder;
 
@@ -265,7 +265,7 @@ void    GpDbQueryMapper::SUpdateByKeysAsJsonb (const GpTypeStructBase&          
             .UPDATE(aTablePath)
             .SET()
                 .PARAM_NAME("data"_sv).ASSIGN().VALUE(GpDbQueryValType::STRING_JSON)
-                .COMMA().PARAM_NAME("_version"_sv).ASSIGN().VALUE(GpDbQueryValType::INT_64)
+                .COMMA().INC_VERSION()
             .WHERE();
                 for (size_t id = 0; id < sizeof...(KeysT); ++id)
                 {
@@ -281,7 +281,6 @@ void    GpDbQueryMapper::SUpdateByKeysAsJsonb (const GpTypeStructBase&          
 
     GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
     dbQuery.NextStrJson(GpJsonMapper::SToJson(aStruct, aFlags));
-    dbQuery.NextInt64(aVersion + 1_s_int_64);
     dbQuery.Nexts<KeysT...>(aKeysValues...);
     dbQuery.NextInt64(aVersion);
     aDbConn.Execute(dbQuery, 1_cnt);

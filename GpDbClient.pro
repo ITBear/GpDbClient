@@ -7,9 +7,9 @@ QMAKE_CXXFLAGS += -DGP_MODULE_UUID=c192f513-2e74-42f6-b3f9-c86c92d72624
 QMAKE_CXXFLAGS += -DGP_TYPE_SYSTEM_STATIC_ADD_TO_MANAGER
 DEFINES		   += GPDBCLIENT_LIBRARY
 PACKET_NAME     = GpDbClient
-DIR_LEVEL       = .
+DIR_LEVEL       = ./..
 
-include(../QtGlobalPro.pri)
+include(../../QtGlobalPro.pri)
 
 #------------------------------ LIBS BEGIN ---------------------------------
 os_windows{

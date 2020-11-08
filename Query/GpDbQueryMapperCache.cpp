@@ -10,12 +10,11 @@ GpDbQueryMapperCache::~GpDbQueryMapperCache (void) noexcept
 {
 }
 
-const GpDbQueryMapperCache::CacheValueT&    GpDbQueryMapperCache::Get (const GpTypeStructInfo&  aStructInfo,
+const GpDbQueryMapperCache::CacheValueT&    GpDbQueryMapperCache::Get (const GpTypeStructInfo&  aTypeInfo,
                                                                        std::string_view         aPurpose,
-                                                                       std::string_view         aTablePath,
                                                                        GenFnT                   aGenFn)
 {
-    GpDbQueryMapperCacheKey key(aStructInfo.UID(), aPurpose + aTablePath);
+    GpDbQueryMapperCacheKey key(aTypeInfo.UID(), aPurpose);
     const auto              val = iCache.Find(key);
 
     if (val.has_value())
@@ -23,14 +22,14 @@ const GpDbQueryMapperCache::CacheValueT&    GpDbQueryMapperCache::Get (const GpT
         return val.value().get();
     }
 
-    auto res = iCache.TryRegister(std::move(key), aGenFn(aStructInfo));
+    auto res = iCache.TryRegister(std::move(key), aGenFn(aTypeInfo));
 
     if (res.has_value())
     {
         return res.value().get();
     } else
     {
-        return Get(aStructInfo, aPurpose, aTablePath, aGenFn);
+        return Get(aTypeInfo, aPurpose, aGenFn);
     }
 }
 

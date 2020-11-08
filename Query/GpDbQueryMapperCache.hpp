@@ -70,9 +70,8 @@ public:
                                 GpDbQueryMapperCache    (void) noexcept;
                                 ~GpDbQueryMapperCache   (void) noexcept;
 
-    const CacheValueT&          Get                     (const GpTypeStructInfo&    aStructInfo,
+    const CacheValueT&          Get                     (const GpTypeStructInfo&    aTypeInfo,
                                                          std::string_view           aPurpose,
-                                                         std::string_view           aTablePath,
                                                          GenFnT                     aGenFn);
 
 private:

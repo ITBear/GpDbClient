@@ -130,7 +130,7 @@ GpDbQuery&  GpDbQuery::Next (T aValue)
 template<typename... Ts>
 GpDbQuery&  GpDbQuery::Nexts (Ts... aValues)
 {
-    GpArray<GpDbQueryValType::EnumT,sizeof...(Ts)> VAL_T = {NextUnpack<Ts>(aValues)...};
+    [[maybe_unused]] GpArray<GpDbQueryValType::EnumT,sizeof...(Ts)> VAL_T = {NextUnpack<Ts>(aValues)...};
     return *this;
 }
 
