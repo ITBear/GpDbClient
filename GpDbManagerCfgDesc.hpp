@@ -8,7 +8,7 @@ class GPDBCLIENT_API GpDbManagerCfgDesc final: public GpTypeStructBase
 {
 public:
     CLASS_DECLARE_DEFAULTS(GpDbManagerCfgDesc)
-    TYPE_STRUCT_DECLARE()
+    TYPE_STRUCT_DECLARE("e200f131-8953-43f6-9ecb-c321b7b00e97"_sv)
 
 public:
                                 GpDbManagerCfgDesc  (void) noexcept;

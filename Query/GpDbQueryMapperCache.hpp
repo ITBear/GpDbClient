@@ -8,25 +8,25 @@ class GpDbQueryMapperCacheKey
 {
 public:
                     GpDbQueryMapperCacheKey (void) noexcept {}
-                    GpDbQueryMapperCacheKey (const GpUUID& aTypeStructUID, std::string_view aPurpose):
-                                            iTypeStructUID(aTypeStructUID),iPurpose(aPurpose) {}
+                    GpDbQueryMapperCacheKey (const GpUUID& aTypeUID, std::string_view aPurpose):
+                                            iTypeUID(aTypeUID),iPurpose(aPurpose) {}
                     GpDbQueryMapperCacheKey (const GpDbQueryMapperCacheKey& aKey):
-                                            iTypeStructUID(aKey.iTypeStructUID),iPurpose(aKey.iPurpose) {}
+                                            iTypeUID(aKey.iTypeUID),iPurpose(aKey.iPurpose) {}
                     GpDbQueryMapperCacheKey (GpDbQueryMapperCacheKey&& aKey) noexcept:
-                                            iTypeStructUID(std::move(aKey.iTypeStructUID)),iPurpose(std::move(aKey.iPurpose)) {}
+                                            iTypeUID(std::move(aKey.iTypeUID)),iPurpose(std::move(aKey.iPurpose)) {}
                     ~GpDbQueryMapperCacheKey(void) noexcept {}
 
     auto&           operator=               (const GpDbQueryMapperCacheKey& aKey)
-                                            {iTypeStructUID = aKey.iTypeStructUID; iPurpose = aKey.iPurpose; return *this;}
+                                            {iTypeUID = aKey.iTypeUID; iPurpose = aKey.iPurpose; return *this;}
     auto&           operator=               (GpDbQueryMapperCacheKey&& aKey) noexcept
-                                            {iTypeStructUID = std::move(aKey.iTypeStructUID); iPurpose = std::move(aKey.iPurpose); return *this;}
+                                            {iTypeUID = std::move(aKey.iTypeUID); iPurpose = std::move(aKey.iPurpose); return *this;}
     bool            operator>               (const GpDbQueryMapperCacheKey& aKey) const noexcept
-                                            {return (iTypeStructUID == aKey.iTypeStructUID) ? (iPurpose > aKey.iPurpose) : (iTypeStructUID > aKey.iTypeStructUID);}
+                                            {return (iTypeUID == aKey.iTypeUID) ? (iPurpose > aKey.iPurpose) : (iTypeUID > aKey.iTypeUID);}
     bool            operator<               (const GpDbQueryMapperCacheKey& aKey) const noexcept
-                                            {return (iTypeStructUID == aKey.iTypeStructUID) ? (iPurpose < aKey.iPurpose) : (iTypeStructUID < aKey.iTypeStructUID);}
+                                            {return (iTypeUID == aKey.iTypeUID) ? (iPurpose < aKey.iPurpose) : (iTypeUID < aKey.iTypeUID);}
 
 public:
-    GpUUID          iTypeStructUID;
+    GpUUID          iTypeUID;
     std::string     iPurpose;
 };
 

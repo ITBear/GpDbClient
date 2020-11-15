@@ -2,7 +2,7 @@
 
 namespace GPlatform {
 
-TYPE_STRUCT_IMPLEMENT(GpDbManagerCfgDesc, "e200f131-8953-43f6-9ecb-c321b7b00e97"_sv, GP_MODULE_UUID)
+TYPE_STRUCT_IMPLEMENT(GpDbManagerCfgDesc, GP_MODULE_UUID)
 
 GpDbManagerCfgDesc::GpDbManagerCfgDesc (void) noexcept
 {

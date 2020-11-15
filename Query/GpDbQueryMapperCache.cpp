@@ -15,7 +15,9 @@ const GpDbQueryMapperCache::CacheValueT&    GpDbQueryMapperCache::Get (const GpT
                                                                        GenFnT                   aGenFn)
 {
     GpDbQueryMapperCacheKey key(aTypeInfo.UID(), aPurpose);
-    const auto              val = iCache.Find(key);
+    return iCache.FindOrRegister(std::move(key), [&](){return aGenFn(aTypeInfo);});
+
+    /*const auto                val = iCache.Find(key);
 
     if (val.has_value())
     {
@@ -30,7 +32,7 @@ const GpDbQueryMapperCache::CacheValueT&    GpDbQueryMapperCache::Get (const GpT
     } else
     {
         return Get(aTypeInfo, aPurpose, aGenFn);
-    }
+    }*/
 }
 
 }//namespace GPlatform
