@@ -4,32 +4,6 @@
 
 namespace GPlatform {
 
-class GpDbQueryMapperCacheKey
-{
-public:
-                    GpDbQueryMapperCacheKey (void) noexcept {}
-                    GpDbQueryMapperCacheKey (const GpUUID& aTypeUID, std::string_view aPurpose):
-                                            iTypeUID(aTypeUID),iPurpose(aPurpose) {}
-                    GpDbQueryMapperCacheKey (const GpDbQueryMapperCacheKey& aKey):
-                                            iTypeUID(aKey.iTypeUID),iPurpose(aKey.iPurpose) {}
-                    GpDbQueryMapperCacheKey (GpDbQueryMapperCacheKey&& aKey) noexcept:
-                                            iTypeUID(std::move(aKey.iTypeUID)),iPurpose(std::move(aKey.iPurpose)) {}
-                    ~GpDbQueryMapperCacheKey(void) noexcept {}
-
-    auto&           operator=               (const GpDbQueryMapperCacheKey& aKey)
-                                            {iTypeUID = aKey.iTypeUID; iPurpose = aKey.iPurpose; return *this;}
-    auto&           operator=               (GpDbQueryMapperCacheKey&& aKey) noexcept
-                                            {iTypeUID = std::move(aKey.iTypeUID); iPurpose = std::move(aKey.iPurpose); return *this;}
-    bool            operator>               (const GpDbQueryMapperCacheKey& aKey) const noexcept
-                                            {return (iTypeUID == aKey.iTypeUID) ? (iPurpose > aKey.iPurpose) : (iTypeUID > aKey.iTypeUID);}
-    bool            operator<               (const GpDbQueryMapperCacheKey& aKey) const noexcept
-                                            {return (iTypeUID == aKey.iTypeUID) ? (iPurpose < aKey.iPurpose) : (iTypeUID < aKey.iTypeUID);}
-
-public:
-    GpUUID          iTypeUID;
-    std::string     iPurpose;
-};
-
 class GpDbQueryMapperCacheValue
 {
 public:
@@ -53,6 +27,9 @@ public:
     std::string                     iQuery;
 };
 
+class GpDbQueryCacheUID_Shell;
+using GpDbQueryCacheUID = GpTypeShell<GpUUID, GpDbQueryCacheUID_Shell>;
+
 class GPDBCLIENT_API GpDbQueryMapperCache
 {
 public:
@@ -60,19 +37,17 @@ public:
     CLASS_DECLARE_DEFAULTS(GpDbQueryMapperCache)
 
 public:
-    using CacheKeyT     = GpDbQueryMapperCacheKey;
+    using CacheKeyT     = GpDbQueryCacheUID;
     using CacheValueT   = GpDbQueryMapperCacheValue;
-
-    using CacheT        = GpElementsCatalog<CacheKeyT, CacheValueT, GpMap>;
-    using GenFnT        = std::function<GpDbQueryMapperCacheValue(const GpTypeStructInfo&)>;
+    using CacheT        = GpElementsCatalog<GpUUID, CacheValueT, GpMap>;
+    using GenFnT        = std::function<GpDbQueryMapperCacheValue()>;
 
 public:
                                 GpDbQueryMapperCache    (void) noexcept;
                                 ~GpDbQueryMapperCache   (void) noexcept;
 
-    const CacheValueT&          Get                     (const GpTypeStructInfo&    aTypeInfo,
-                                                         std::string_view           aPurpose,
-                                                         GenFnT                     aGenFn);
+    const CacheValueT&          Get                     (const CacheKeyT&   aUID,
+                                                         GenFnT             aGenFn);
 
 private:
     CacheT                      iCache;

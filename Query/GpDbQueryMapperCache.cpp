@@ -10,29 +10,10 @@ GpDbQueryMapperCache::~GpDbQueryMapperCache (void) noexcept
 {
 }
 
-const GpDbQueryMapperCache::CacheValueT&    GpDbQueryMapperCache::Get (const GpTypeStructInfo&  aTypeInfo,
-                                                                       std::string_view         aPurpose,
-                                                                       GenFnT                   aGenFn)
+const GpDbQueryMapperCache::CacheValueT&    GpDbQueryMapperCache::Get (const CacheKeyT& aUID,
+                                                                       GenFnT           aGenFn)
 {
-    GpDbQueryMapperCacheKey key(aTypeInfo.UID(), aPurpose);
-    return iCache.FindOrRegister(std::move(key), [&](){return aGenFn(aTypeInfo);});
-
-    /*const auto                val = iCache.Find(key);
-
-    if (val.has_value())
-    {
-        return val.value().get();
-    }
-
-    auto res = iCache.TryRegister(std::move(key), aGenFn(aTypeInfo));
-
-    if (res.has_value())
-    {
-        return res.value().get();
-    } else
-    {
-        return Get(aTypeInfo, aPurpose, aGenFn);
-    }*/
+    return iCache.FindOrRegister(aUID.Value(), [&](){return aGenFn();});
 }
 
 }//namespace GPlatform

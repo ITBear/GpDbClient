@@ -14,8 +14,9 @@ public:
     CLASS_REMOVE_CTRS(GpDbConnection)
     CLASS_DECLARE_DEFAULTS(GpDbConnection)
 
-    using StatusTE  = GpDbConnectionStatus::EnumT;
-    using ModeTE    = GpDbConnectionMode::EnumT;
+    using StatusTE              = GpDbConnectionStatus::EnumT;
+    using ModeTE                = GpDbConnectionMode::EnumT;
+    using TransactionLevelTE    = GpDbTransactionIsolation::EnumT;
 
 protected:
                                 GpDbConnection          (const StatusTE aStatus,
@@ -31,6 +32,7 @@ public:
     void                        BeginTransaction        (GpDbTransactionIsolation::EnumT aIsolationLevel);
     void                        CommitTransaction       (void);
     void                        RollbackTransaction     (void);
+    TransactionLevelTE          TransactionLevel        (void) const noexcept {return iTransactionLevel;}
 
     virtual void                Close                   (void) = 0;
     virtual GpDbQueryRes::SP    Execute                 (const GpDbQuery&   aQuery,
@@ -52,6 +54,7 @@ private:
     StatusTE                    iStatus             = StatusTE::CLOSED;
     const ModeTE                iMode;
     bool                        iIsTransactionOpen  = false;
+    TransactionLevelTE          iTransactionLevel   = TransactionLevelTE::READ_UNCOMMITTED;
 };
 
 }//namespace GPlatform

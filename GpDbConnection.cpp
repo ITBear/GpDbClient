@@ -16,19 +16,22 @@ GpDbConnection::~GpDbConnection (void) noexcept
 void    GpDbConnection::BeginTransaction (GpDbTransactionIsolation::EnumT aIsolationLevel)
 {
     OnBeginTransaction(aIsolationLevel);
-    iIsTransactionOpen = true;
+    iIsTransactionOpen  = true;
+    iTransactionLevel   = aIsolationLevel;
 }
 
 void    GpDbConnection::CommitTransaction (void)
 {
     OnCommitTransaction();
-    iIsTransactionOpen = false;
+    iIsTransactionOpen  = false;
+    iTransactionLevel   = TransactionLevelTE::READ_UNCOMMITTED;
 }
 
 void    GpDbConnection::RollbackTransaction (void)
 {
     OnRollbackTransaction();
-    iIsTransactionOpen = false;
+    iIsTransactionOpen  = false;
+    iTransactionLevel   = TransactionLevelTE::READ_UNCOMMITTED;
 }
 
 }//namespace GPlatform

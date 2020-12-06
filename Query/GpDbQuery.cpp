@@ -43,6 +43,39 @@ GpDbQuery&  GpDbQuery::NextStrValue (std::string&& aValue)
     return *this;
 }
 
+GpDbQuery&  GpDbQuery::NextStrValueArray (const GpVector<std::string_view>& aValue)
+{
+    GpVector<std::string> v;
+    v.reserve(aValue.size());
+
+    for (std::string_view e: aValue)
+    {
+        v.emplace_back(std::string(e));
+    }
+
+    _MoveNext<GpVector<std::string>, GpDbQueryValType::STRING_VALUE_ARRAY>(std::move(v));
+    return *this;
+}
+
+GpDbQuery&  GpDbQuery::NextStrValueArray (const GpVector<std::string>& aValue)
+{
+    _SetNext<GpVector<std::string>, GpDbQueryValType::STRING_VALUE_ARRAY>(aValue);
+    return *this;
+}
+
+GpDbQuery&  GpDbQuery::NextStrValueArray (GpVector<std::string>&& aValue)
+{
+    _MoveNext<GpVector<std::string>, GpDbQueryValType::STRING_VALUE_ARRAY>(std::move(aValue));
+    return *this;
+}
+
+GpDbQuery&  GpDbQuery::NextStrValueArray (const GpEnumFlags& aValue)
+{
+    GpVector<std::string> v = aValue.ToStringArray();
+    _MoveNext<GpVector<std::string>, GpDbQueryValType::STRING_VALUE_ARRAY>(std::move(v));
+    return *this;
+}
+
 GpDbQuery&  GpDbQuery::NextStrName (std::string_view aValue)
 {
     _MoveNext<GpDbQueryValStrName, GpDbQueryValType::STRING_NAME>(std::string(aValue));
@@ -105,6 +138,11 @@ SInt64  GpDbQuery::Int64 (const count_t aId) const
 std::string_view    GpDbQuery::StrValue (const count_t aId) const
 {
     return std::get<GpDbQueryValStrValue>(iValues.at(aId.As<size_t>())).Value();
+}
+
+const GpVector<std::string>&    GpDbQuery::StrValueArray (const count_t aId) const
+{
+    return std::get<GpVector<std::string>>(iValues.at(aId.As<size_t>()));
 }
 
 std::string_view    GpDbQuery::StrName (const count_t aId) const

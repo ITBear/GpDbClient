@@ -16,47 +16,52 @@ public:
     using ValuesVecT        = GpVector<GpDbQueryValue>;
 
 public:
-                            GpDbQuery       (std::string_view aQueryStr);
-                            GpDbQuery       (std::string_view       aQueryStr,
-                                             const ValuesTypesVecT& aValuesTypes);
-                            GpDbQuery       (std::string&&      aQueryStr,
-                                             ValuesTypesVecT&&  aValuesTypes) noexcept;
-                            ~GpDbQuery      (void) noexcept;
+                                    GpDbQuery           (std::string_view aQueryStr);
+                                    GpDbQuery           (std::string_view       aQueryStr,
+                                                         const ValuesTypesVecT& aValuesTypes);
+                                    GpDbQuery           (std::string&&      aQueryStr,
+                                                         ValuesTypesVecT&&  aValuesTypes) noexcept;
+                                    ~GpDbQuery          (void) noexcept;
 
-    std::string_view        QueryStr        (void) const noexcept {return iQueryStr;}
-    const ValuesTypesVecT&  ValuesTypes     (void) const noexcept {return iValuesTypes;}
-    const ValuesVecT&       Values          (void) const noexcept {return iValues;}
+    std::string_view                QueryStr            (void) const noexcept {return iQueryStr;}
+    const ValuesTypesVecT&          ValuesTypes         (void) const noexcept {return iValuesTypes;}
+    const ValuesVecT&               Values              (void) const noexcept {return iValues;}
 
-    GpDbQuery&              NextInt64       (const SInt64           aValue);
-    GpDbQuery&              NextStrValue    (std::string_view       aValue);
-    GpDbQuery&              NextStrValue    (std::string&&          aValue);
-    GpDbQuery&              NextStrName     (std::string_view       aValue);
-    GpDbQuery&              NextStrName     (std::string&&          aValue);
-    GpDbQuery&              NextStrJson     (std::string_view       aValue);
-    GpDbQuery&              NextStrJson     (std::string&&          aValue);
-    GpDbQuery&              NextUUID        (const GpUUID&          aValue);
-    GpDbQuery&              NextBLOB        (const GpRawPtrByteR    aValue);
-    GpDbQuery&              NextBLOB        (GpBytesArray&&         aValue);
-    GpDbQuery&              NextBoolean     (const bool             aValue);
-    GpDbQuery&              NextNULL        (void);
+    GpDbQuery&                      NextInt64           (const SInt64                       aValue);
+    GpDbQuery&                      NextStrValue        (std::string_view                   aValue);
+    GpDbQuery&                      NextStrValue        (std::string&&                      aValue);
+    GpDbQuery&                      NextStrValueArray   (const GpVector<std::string_view>&  aValue);
+    GpDbQuery&                      NextStrValueArray   (const GpVector<std::string>&       aValue);
+    GpDbQuery&                      NextStrValueArray   (GpVector<std::string>&&            aValue);
+    GpDbQuery&                      NextStrValueArray   (const GpEnumFlags&                 aValue);
+    GpDbQuery&                      NextStrName         (std::string_view                   aValue);
+    GpDbQuery&                      NextStrName         (std::string&&                      aValue);
+    GpDbQuery&                      NextStrJson         (std::string_view                   aValue);
+    GpDbQuery&                      NextStrJson         (std::string&&                      aValue);
+    GpDbQuery&                      NextUUID            (const GpUUID&                      aValue);
+    GpDbQuery&                      NextBLOB            (const GpRawPtrByteR                aValue);
+    GpDbQuery&                      NextBLOB            (GpBytesArray&&                     aValue);
+    GpDbQuery&                      NextBoolean         (const bool                         aValue);
+    GpDbQuery&                      NextNULL            (void);
 
     template<GpDbQueryValType::EnumT E,
              typename                T>
-    GpDbQuery&              Next            (T aValue);
+    GpDbQuery&                      Next            (T aValue);
 
     template<typename... Ts>
-    GpDbQuery&              Nexts           (Ts... aValues);
+    GpDbQuery&                      Nexts           (Ts... aValues);
 
     template<typename T>
-    GpDbQueryValType::EnumT NextUnpack      (T aValue);
+    GpDbQueryValType::EnumT         NextUnpack      (T aValue);
 
-    SInt64                  Int64           (const count_t aId) const;
-    std::string_view        StrValue        (const count_t aId) const;
-    std::string_view        StrName         (const count_t aId) const;
-    std::string_view        StrJson         (const count_t aId) const;
-    const GpUUID&           UUID            (const count_t aId) const;
-    bool                    Boolean         (const count_t aId) const;
-    const GpBytesArray&     BLOB            (const count_t aId) const;
+    SInt64                          Int64           (const count_t aId) const;
+    std::string_view                StrValue        (const count_t aId) const;
+    const GpVector<std::string>&    StrValueArray   (const count_t aId) const;
+    std::string_view                StrName         (const count_t aId) const;
+    std::string_view                StrJson         (const count_t aId) const;
+    const GpUUID&                   UUID            (const count_t aId) const;
+    bool                            Boolean         (const count_t aId) const;
+    const GpBytesArray&             BLOB            (const count_t aId) const;
 
 private:
     template<typename                   T,
@@ -103,6 +108,9 @@ GpDbQuery&  GpDbQuery::Next (T aValue)
     } else if constexpr(E == GpDbQueryValType::STRING_VALUE)
     {
         return NextStrValue(std::forward<T>(aValue));
+    } else if constexpr(E == GpDbQueryValType::STRING_VALUE_ARRAY)
+    {
+        return NextStrValueArray(std::forward<T>(aValue));
     } else if constexpr(E == GpDbQueryValType::STRING_NAME)
     {
         return NextStrName(std::forward<T>(aValue));
@@ -123,7 +131,7 @@ GpDbQuery&  GpDbQuery::Next (T aValue)
         return NextNULL();
     } else
     {
-        GpThrowCe<std::out_of_range>("Unknown type");
+        GpThrowCe<std::out_of_range>("Unknown type"_sv);
     }
 }
 
