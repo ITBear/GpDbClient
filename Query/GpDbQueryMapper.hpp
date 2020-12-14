@@ -95,6 +95,11 @@ public:
                                                              std::string_view           aTablePath,
                                                              GpDbConnection&            aDbConn);
 
+    static void                 SInsertAsRowVec             (const GpDbQueryCacheUID&               aCacheUID,
+                                                             const GpTypeStructBase::C::Vec::SP&    aStructVec,
+                                                             std::string_view                       aTablePath,
+                                                             GpDbConnection&                        aDbConn);
+
     template<typename... KeysT> static
     SInt64/*version*/           SSelectByKeysAsRow          (const GpDbQueryCacheUID&                           aCacheUID,
                                                              GpTypeStructBase&                                  aStruct,

@@ -61,10 +61,13 @@ public:
     GpDbQueryBuilder&           BETWEEN             (void);
     GpDbQueryBuilder&           BETWEEN             (const GpDbQueryValType::EnumT aValueTypeA,
                                                      const GpDbQueryValType::EnumT aValueTypeB);
+    GpDbQueryBuilder&           IS_NULL             (void);
 
     GpDbQueryBuilder&           VALUES_BEGIN        (void);
     GpDbQueryBuilder&           VALUES_END          (void);
+    GpDbQueryBuilder&           VALUES              (void);
 
+    GpDbQueryBuilder&           WITH                (std::string_view aName);
     GpDbQueryBuilder&           SELECT              (void);
     GpDbQueryBuilder&           FROM                (std::string_view aTableName);  
     GpDbQueryBuilder&           FROM                (void);
@@ -77,6 +80,8 @@ public:
     GpDbQueryBuilder&           OFFSET              (const count_t aValue);
     GpDbQueryBuilder&           OFFSET              (const GpDbQueryValType::EnumT aValueType);
     GpDbQueryBuilder&           RETURNING           (void);
+    GpDbQueryBuilder&           FOR_UPDATE          (void);
+    GpDbQueryBuilder&           DELETE_FROM         (std::string_view aTableName);
 
     GpDbQueryBuilder&           INNER_JOIN          (std::string_view aTableName);
     GpDbQueryBuilder&           LEFT_JOIN           (std::string_view aTableName);
@@ -84,9 +89,17 @@ public:
 
     GpDbQueryBuilder&           PARAM               (std::string_view aName);
     GpDbQueryBuilder&           PARAMS              (const GpVector<std::string_view>& aNames);
+    GpDbQueryBuilder&           VALUE_NULL          (void);
     GpDbQueryBuilder&           VALUE               (const GpDbQueryValType::EnumT aValueType);
+    GpDbQueryBuilder&           VALUE               (const GpDbQueryValType::EnumT  aValueType,
+                                                     std::string_view               aTypeCast);
     GpDbQueryBuilder&           VALUE               (std::string_view aValue);
+    GpDbQueryBuilder&           VALUE               (std::string_view   aValue,
+                                                     std::string_view   aTypeCast);
     GpDbQueryBuilder&           VALUE               (const SInt64 aValue);
+    GpDbQueryBuilder&           VALUE               (const bool aValue);
+    GpDbQueryBuilder&           VALUE               (const GpEnum&      aValue,
+                                                     std::string_view   aTypeCast);
     GpDbQueryBuilder&           RAW                 (std::string_view aStr);
 
     GpDbQueryBuilder&           STRUCT_PARAM_NAMES  (std::string_view aTableName, const GpTypeStructInfo& aTypeInfo);
@@ -96,6 +109,8 @@ public:
     GpDbQueryBuilder&           INC_VERSION         (void);
 
     std::string                 AddValueBind        (const GpDbQueryValType::EnumT aValueType);
+    std::string                 AddValueBind        (const GpDbQueryValType::EnumT  aValueType,
+                                                     std::string_view               aTypeCast);
 
     static GpVector<TypeInfo>   SFromTypeInfo       (const GpTypeStructInfo& aTypeInfo);
 

@@ -192,6 +192,46 @@ void    GpDbQueryMapper::SInsertAsRow (const GpDbQueryCacheUID& aCacheUID,
     aDbConn.Execute(dbQuery, 0_cnt);
 }
 
+void    GpDbQueryMapper::SInsertAsRowVec (const GpDbQueryCacheUID&              /*aCacheUID*/,
+                                          const GpTypeStructBase::C::Vec::SP&   /*aStructVec*/,
+                                          std::string_view                      /*aTablePath*/,
+                                          GpDbConnection&                       /*aDbConn*/)
+{
+    //TODO implement
+    THROW_NOT_IMPLEMENTED();
+
+    /*if (aStructVec.size() == 0)
+    {
+        return;
+    }
+
+    const auto& cacheVal = sMapperCache.Get
+    (
+        aCacheUID,
+        [&]()
+        {
+            GpDbQueryBuilder builder;
+
+            builder
+                .INSERT_INTO(aTablePath)
+                .BRACE_BEGIN()
+                    .STRUCT_PARAM_NAMES(""_sv, aStruct.TypeInfo())
+                .BRACE_END()
+                .VALUES();
+
+
+                    .STRUCT_PARAM_BINDS(aStruct.TypeInfo())
+                .VALUES_END();
+
+            return GpDbQueryMapperCacheValue(builder.ValuesTypesMove(), builder.QueryStrMove());
+        }
+    );
+
+    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
+    SWriteRowValues(dbQuery, aStruct);
+    aDbConn.Execute(dbQuery, 0_cnt);*/
+}
+
 void    GpDbQueryMapper::SInsertAsJsonb (const GpDbQueryCacheUID&   aCacheUID,
                                          const GpTypeStructBase&    aStruct,
                                          std::string_view           aTablePath,

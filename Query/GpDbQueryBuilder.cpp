@@ -4,15 +4,15 @@ namespace GPlatform {
 
 GpArray<std::string, GpDbQueryValType::SCount().As<size_t>()>   GpDbQueryBuilder::sBindStrs
 {
-    "::bigint",     //INT_64,
-    "",             //STRING_VALUE,::text
-    "",             //STRING_VALUE_ARRAY,::...[]
-    "",             //STRING_NAME,
-    "::jsonb",      //STRING_JSON,
-    "::uuid",       //UUID,
-    "::bytea",      //BLOB,
-    "::boolean",    //BOOLEAN,
-    ""              //NULL_VAL
+    "bigint",   //INT_64,
+    "",         //STRING_VALUE,::text
+    "",         //STRING_VALUE_ARRAY,::...[]
+    "",         //STRING_NAME,
+    "jsonb",    //STRING_JSON,
+    "uuid",     //UUID,
+    "bytea",    //BLOB,
+    "boolean",  //BOOLEAN,
+    ""          //NULL_VAL
 };
 
 GpDbQueryBuilder::GpDbQueryBuilder (void)
@@ -273,6 +273,17 @@ GpDbQueryBuilder&   GpDbQueryBuilder::BETWEEN (const GpDbQueryValType::EnumT aVa
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::IS_NULL (void)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("IS NULL"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
 GpDbQueryBuilder&   GpDbQueryBuilder::VALUES_BEGIN (void)
 {
     CheckForSpace();
@@ -291,6 +302,27 @@ GpDbQueryBuilder&   GpDbQueryBuilder::VALUES_END (void)
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUES (void)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("VALUES "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::WITH (std::string_view aName)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("WITH "_sv)
+        .append(aName)
+        .append(" "_sv);
+
+    return *this;
+}
 
 GpDbQueryBuilder&   GpDbQueryBuilder::SELECT (void)
 {
@@ -430,6 +462,22 @@ GpDbQueryBuilder&   GpDbQueryBuilder::RETURNING (void)
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::FOR_UPDATE (void)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("FOR UPDATE"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::DELETE_FROM (std::string_view aTableName)
+{
+    return RAW("DELETE FROM"_sv).RAW(aTableName);
+}
+
 GpDbQueryBuilder&   GpDbQueryBuilder::INNER_JOIN (std::string_view aTableName)
 {
     CheckForSpace();
@@ -488,12 +536,31 @@ GpDbQueryBuilder&   GpDbQueryBuilder::PARAMS (const GpVector<std::string_view>& 
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE_NULL (void)
+{
+    RAW("NULL"_sv);
+
+    return *this;
+}
+
 GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const GpDbQueryValType::EnumT aValueType)
 {
     CheckForSpace();
 
     iQueryStr
         .append(AddValueBind(aValueType))
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const GpDbQueryValType::EnumT  aValueType,
+                                             std::string_view               aTypeCast)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append(AddValueBind(aValueType, aTypeCast))
         .append(" "_sv);
 
     return *this;
@@ -506,7 +573,21 @@ GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (std::string_view aValue)
     iQueryStr
         .append("'"_sv)
         .append(aValue)
-        .append("' "_sv);
+        .append("'"_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (std::string_view   aValue,
+                                             std::string_view   aTypeCast)
+{
+    CheckForSpace();
+
+    VALUE(aValue);
+
+    iQueryStr
+        .append("::"_sv).append(aTypeCast)
+        .append(" "_sv);
 
     return *this;
 }
@@ -520,6 +601,23 @@ GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const SInt64 aValue)
         .append(" "_sv);
 
     return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const bool aValue)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append(aValue ? "true"_sv : "false"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const GpEnum&      aValue,
+                                             std::string_view   aTypeCast)
+{
+    return VALUE(aValue.ToString(), aTypeCast);
 }
 
 GpDbQueryBuilder&   GpDbQueryBuilder::RAW (std::string_view aStr)
@@ -629,15 +727,24 @@ GpDbQueryBuilder&   GpDbQueryBuilder::INC_VERSION (void)
 
 std::string GpDbQueryBuilder::AddValueBind (const GpDbQueryValType::EnumT aValueType)
 {
+    return AddValueBind(aValueType, sBindStrs.at(size_t(aValueType)));
+}
+
+std::string GpDbQueryBuilder::AddValueBind (const GpDbQueryValType::EnumT   aValueType,
+                                            std::string_view                aTypeCast)
+{
     iValuesTypes.emplace_back(aValueType);
 
     std::string res;
-    res.reserve(10);
 
     res
         .append("$"_sv)
-        .append(StrOps::SToString<size_t>(iValuesTypes.size()))
-        .append(sBindStrs.at(size_t(aValueType)));
+        .append(StrOps::SToString<size_t>(iValuesTypes.size()));
+
+    if (aTypeCast.length() > 0)
+    {
+        res.append("::"_sv).append(aTypeCast);
+    }
 
     return res;
 }
