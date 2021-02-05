@@ -39,6 +39,9 @@ public:
     GpDbQueryBuilder&           BRACE_END           (void);
     GpDbQueryBuilder&           COMMA               (void);
     GpDbQueryBuilder&           AND                 (void);
+    GpDbQueryBuilder&           OR                  (void);
+    GpDbQueryBuilder&           BITWISE_AND         (void);
+    GpDbQueryBuilder&           BITWISE_OR          (void);
     GpDbQueryBuilder&           EQUAL               (void);
     GpDbQueryBuilder&           GREATER             (void);
     GpDbQueryBuilder&           GREATER_EQUAL       (void);
@@ -55,6 +58,7 @@ public:
     GpDbQueryBuilder&           LAST                (void);
     GpDbQueryBuilder&           ON                  (void);
     GpDbQueryBuilder&           AS                  (void);
+    GpDbQueryBuilder&           AS                  (std::string_view aName);
     GpDbQueryBuilder&           IN                  (void);
     GpDbQueryBuilder&           ANY                 (const GpDbQueryValType::EnumT  aValueType,
                                                      std::string_view               aTypeCast);
@@ -142,6 +146,8 @@ consteval GpDbQueryValType::EnumT GpDbQueryBuilder::SDetectValType (void)
     else if constexpr (t == GpType::S_INT_32)   return GpDbQueryValType::INT_64;
     else if constexpr (t == GpType::U_INT_64)   return GpDbQueryValType::INT_64;
     else if constexpr (t == GpType::S_INT_64)   return GpDbQueryValType::INT_64;
+    else if constexpr (t == GpType::UNIX_TS_S)  return GpDbQueryValType::INT_64;
+    else if constexpr (t == GpType::UNIX_TS_MS) return GpDbQueryValType::INT_64;
     else if constexpr (t == GpType::DOUBLE)     GpThrowCe<T>("Unsupported type");
     else if constexpr (t == GpType::FLOAT)      GpThrowCe<T>("Unsupported type");
     else if constexpr (t == GpType::BOOLEAN)    return GpDbQueryValType::BOOLEAN;

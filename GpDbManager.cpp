@@ -5,10 +5,13 @@
 
 namespace GPlatform {
 
-GpDbManager::GpDbManager (std::string_view                  aName,
-                          GpSP<GpDbDriver>                  aDriver,
-                          std::string_view                  aConnectionStr,
-                          const GpDbConnectionMode::EnumT   aMode):
+GpDbManager::GpDbManager
+(
+    std::string_view                aName,
+    GpSP<GpDbDriver>                aDriver,
+    std::string_view                aConnectionStr,
+    const GpDbConnectionMode::EnumT aMode
+):
 iName(aName),
 iDriver(std::move(aDriver)),
 iConnStr(aConnectionStr),
@@ -32,6 +35,12 @@ GpDbConnection::SP  GpDbManager::NewElement (void)
 
 void    GpDbManager::OnClear (void) noexcept
 {
+    //NOP
+}
+
+bool    GpDbManager::Validate (GpSP<GpDbConnection> /*aConnection*/) noexcept
+{
+    return true;
 }
 
 }//namespace GPlatform

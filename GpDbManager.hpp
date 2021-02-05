@@ -28,6 +28,7 @@ protected:
     virtual void                    PreInit             (const count_t aCount) override final;
     virtual GpSP<GpDbConnection>    NewElement          (void) override final;
     virtual void                    OnClear             (void) noexcept override final;
+    virtual bool                    Validate            (GpSP<GpDbConnection> aConnection) noexcept override final;
 
 private:
     const std::string               iName;

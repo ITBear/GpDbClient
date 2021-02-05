@@ -227,12 +227,13 @@ public:
     static void                 SWriteRowValues             (GpDbQuery&                 aDbQuery,
                                                              const GpTypeStructBase&    aStruct);
     static SInt64               SRowToVersion               (const GpDbQueryRes&    aDbQueryRes,
+                                                             const count_t          aRowId,
                                                              const count_t          aColOffset);
     static count_t              SRowToStruct                (const GpDbQueryRes&    aDbQueryRes,
                                                              GpTypeStructBase&      aStruct,
                                                              const count_t          aRowId,
                                                              const count_t          aColOffset);
-    static void                 SJsonToStruct               (GpDbQueryRes&          aDbQueryRes,
+    static void                 SJsonToStruct               (const GpDbQueryRes&    aDbQueryRes,
                                                              GpTypeStructBase&      aStruct,
                                                              const count_t          aRowId,
                                                              const count_t          aColOffset);
@@ -530,7 +531,7 @@ SInt64  GpDbQueryMapper::SSelectByKeysAsRow (const GpDbQueryCacheUID&           
     GpDbQueryRes::SP dbQueryRes = aDbConn.Execute(dbQuery, 1_cnt);
 
     //Read
-    const SInt64 version = SRowToVersion(dbQueryRes.VCn(), 0_cnt);
+    const SInt64 version = SRowToVersion(dbQueryRes.VCn(), 0_cnt, 0_cnt);
     SRowToStruct(dbQueryRes.VCn(), aStruct, 0_cnt, 1_cnt);
 
     return version;
@@ -807,7 +808,7 @@ SInt64  GpDbQueryMapper::SSelectByKeysAsJsonb (const GpDbQueryCacheUID&         
     GpDbQueryRes::SP dbQueryRes = aDbConn.Execute(dbQuery, 1_cnt);
 
     //Read
-    const SInt64 version = SRowToVersion(dbQueryRes.VCn(), 0_cnt);
+    const SInt64 version = SRowToVersion(dbQueryRes.VCn(), 0_cnt, 0_cnt);
     SJsonToStruct(dbQueryRes.Vn(), aStruct, 0_cnt, 1_cnt);
 
     return version;

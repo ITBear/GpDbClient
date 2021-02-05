@@ -83,6 +83,39 @@ GpDbQueryBuilder&   GpDbQueryBuilder::AND (void)
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::OR (void)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("OR"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::BITWISE_AND (void)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("&"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::BITWISE_OR (void)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("|"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
 GpDbQueryBuilder&   GpDbQueryBuilder::EQUAL (void)
 {
     iQueryStr
@@ -226,6 +259,19 @@ GpDbQueryBuilder&   GpDbQueryBuilder::AS (void)
 
     iQueryStr
         .append("AS"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::AS (std::string_view aName)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("AS"_sv)
+        .append(" "_sv)
+        .append(aName)
         .append(" "_sv);
 
     return *this;
@@ -585,8 +631,13 @@ GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (std::string_view   aValue,
 
     VALUE(aValue);
 
+    if (aTypeCast.length() > 0)
+    {
+        iQueryStr
+            .append("::"_sv).append(aTypeCast);
+    }
+
     iQueryStr
-        .append("::"_sv).append(aTypeCast)
         .append(" "_sv);
 
     return *this;
@@ -760,22 +811,27 @@ GpVector<GpDbQueryBuilder::TypeInfo>    GpDbQueryBuilder::SFromTypeInfo (const G
 
     for (const GpTypePropInfo& propInfo: aTypeInfo.Props())
     {
-        THROW_GPE_COND_CHECK_M(propInfo.Container() == GpTypeContainer::NO,
-                               "Container of property '"_sv + aTypeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv);
+        THROW_GPE_COND_CHECK_M
+        (
+            propInfo.Container() == GpTypeContainer::NO,
+            "Container of property '"_sv + aTypeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv
+        );
 
         std::string             valueBind;
         GpDbQueryValType::EnumT valueType;
 
         switch (propInfo.Type())
         {
-            case GpType::U_INT_8:
-            case GpType::S_INT_8:
-            case GpType::U_INT_16:
-            case GpType::S_INT_16:
-            case GpType::U_INT_32:
-            case GpType::S_INT_32:
-            case GpType::U_INT_64:
-            case GpType::S_INT_64:
+            case GpType::U_INT_8:    [[fallthrough]];
+            case GpType::S_INT_8:    [[fallthrough]];
+            case GpType::U_INT_16:   [[fallthrough]];
+            case GpType::S_INT_16:   [[fallthrough]];
+            case GpType::U_INT_32:   [[fallthrough]];
+            case GpType::S_INT_32:   [[fallthrough]];
+            case GpType::U_INT_64:   [[fallthrough]];
+            case GpType::S_INT_64:   [[fallthrough]];
+            case GpType::UNIX_TS_S:  [[fallthrough]];
+            case GpType::UNIX_TS_MS:
             {
                 valueType   = GpDbQueryValType::INT_64;
                 valueBind   = "::bigint"_sv;
@@ -803,8 +859,16 @@ GpVector<GpDbQueryBuilder::TypeInfo>    GpDbQueryBuilder::SFromTypeInfo (const G
                 valueType   = GpDbQueryValType::BLOB;
                 valueBind   = "::bytea"_sv;
             } break;
-            case GpType::STRUCT:    THROW_GPE("Unsupported type STRUCT"_sv); break;
-            case GpType::STRUCT_SP: THROW_GPE("Unsupported type STRUCT_SP"_sv); break;
+            case GpType::STRUCT:
+            {
+                valueType   = GpDbQueryValType::STRING_JSON;
+                valueBind   = "::jsonb"_sv;
+            } break;
+            case GpType::STRUCT_SP:
+            {
+                valueType   = GpDbQueryValType::STRING_JSON;
+                valueBind   = "::jsonb"_sv;
+            } break;
             case GpType::ENUM:
             {
                 valueType   = GpDbQueryValType::STRING_VALUE;
@@ -816,7 +880,7 @@ GpVector<GpDbQueryBuilder::TypeInfo>    GpDbQueryBuilder::SFromTypeInfo (const G
                 valueBind   = ""_sv;//TODO ? can be any ENUM DB type (CREATE TYPE schema.table AS ENUM ('A', 'B', 'C');
                                     //then valueBind must be = ::schema.table[]
             } break;
-            case GpType::NOT_SET:
+            case GpType::NOT_SET: [[fallthrough]];
             default:
             {
                 THROW_GPE("Unsupported type NOT_SET"_sv); break;

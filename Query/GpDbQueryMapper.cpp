@@ -4,13 +4,15 @@ namespace GPlatform {
 
 GpDbQueryMapperCache    GpDbQueryMapper::sMapperCache;
 
-SInt64  GpDbQueryMapper::SSelectPagingStartPoint (const GpDbQueryCacheUID&  aCacheUID,
-                                                  std::string_view          aTablePath,
-                                                  GpDbConnection&           aDbConn,
-                                                  std::string_view          aPagingCounterName,
-                                                  std::string_view          aTimestampName,
-                                                  const unix_ts_s_t         aTimestamp)
-
+SInt64  GpDbQueryMapper::SSelectPagingStartPoint
+(
+    const GpDbQueryCacheUID&    aCacheUID,
+    std::string_view            aTablePath,
+    GpDbConnection&             aDbConn,
+    std::string_view            aPagingCounterName,
+    std::string_view            aTimestampName,
+    const unix_ts_s_t           aTimestamp
+)
 {
     //SELECT
     //   COALESCE(aPagingCounterName, 0)
@@ -62,14 +64,17 @@ SInt64  GpDbQueryMapper::SSelectPagingStartPoint (const GpDbQueryCacheUID&  aCac
     return dbQueryRes.GetInt64(0_cnt, 0_cnt, std::nullopt);
 }
 
-SInt64  GpDbQueryMapper::SSelectPagingStartPoint (const GpDbQueryCacheUID&  aCacheUID,
-                                                  std::string_view          aTablePath,
-                                                  GpDbConnection&           aDbConn,
-                                                  std::string_view          aPagingCounterName,
-                                                  std::string_view          aUidParamName,
-                                                  const GpUUID&             aUid,
-                                                  std::string_view          aTimestampName,
-                                                  const unix_ts_s_t         aTimestamp)
+SInt64  GpDbQueryMapper::SSelectPagingStartPoint
+(
+    const GpDbQueryCacheUID&    aCacheUID,
+    std::string_view            aTablePath,
+    GpDbConnection&             aDbConn,
+    std::string_view            aPagingCounterName,
+    std::string_view            aUidParamName,
+    const GpUUID&               aUid,
+    std::string_view            aTimestampName,
+    const unix_ts_s_t           aTimestamp
+)
 {
     //SELECT COALESCE(
     //   aStartPointIdValueName
@@ -125,9 +130,12 @@ SInt64  GpDbQueryMapper::SSelectPagingStartPoint (const GpDbQueryCacheUID&  aCac
     return dbQueryRes.GetInt64(0_cnt, 0_cnt, std::nullopt);
 }
 
-void    GpDbQueryMapper::SCreatePagingOrderCounter (const GpUUID&       aUid,
-                                                    std::string_view    aName,
-                                                    GpDbConnection&     aDbConn)
+void    GpDbQueryMapper::SCreatePagingOrderCounter
+(
+    const GpUUID&       aUid,
+    std::string_view    aName,
+    GpDbConnection&     aDbConn
+)
 {
     const auto& cacheVal = sMapperCache.Get
     (
@@ -162,10 +170,13 @@ void    GpDbQueryMapper::SCreatePagingOrderCounter (const GpUUID&       aUid,
     aDbConn.Execute(dbQuery, 0_cnt);
 }
 
-void    GpDbQueryMapper::SInsertAsRow (const GpDbQueryCacheUID& aCacheUID,
-                                       const GpTypeStructBase&  aStruct,
-                                       std::string_view         aTablePath,
-                                       GpDbConnection&          aDbConn)
+void    GpDbQueryMapper::SInsertAsRow
+(
+    const GpDbQueryCacheUID&    aCacheUID,
+    const GpTypeStructBase&     aStruct,
+    std::string_view            aTablePath,
+    GpDbConnection&             aDbConn
+)
 {
     const auto& cacheVal = sMapperCache.Get
     (
@@ -192,10 +203,13 @@ void    GpDbQueryMapper::SInsertAsRow (const GpDbQueryCacheUID& aCacheUID,
     aDbConn.Execute(dbQuery, 0_cnt);
 }
 
-void    GpDbQueryMapper::SInsertAsRowVec (const GpDbQueryCacheUID&              /*aCacheUID*/,
-                                          const GpTypeStructBase::C::Vec::SP&   /*aStructVec*/,
-                                          std::string_view                      /*aTablePath*/,
-                                          GpDbConnection&                       /*aDbConn*/)
+void    GpDbQueryMapper::SInsertAsRowVec
+(
+    const GpDbQueryCacheUID&            /*aCacheUID*/,
+    const GpTypeStructBase::C::Vec::SP& /*aStructVec*/,
+    std::string_view                    /*aTablePath*/,
+    GpDbConnection&                     /*aDbConn*/
+)
 {
     //TODO implement
     THROW_NOT_IMPLEMENTED();
@@ -232,11 +246,14 @@ void    GpDbQueryMapper::SInsertAsRowVec (const GpDbQueryCacheUID&              
     aDbConn.Execute(dbQuery, 0_cnt);*/
 }
 
-void    GpDbQueryMapper::SInsertAsJsonb (const GpDbQueryCacheUID&   aCacheUID,
-                                         const GpTypeStructBase&    aStruct,
-                                         std::string_view           aTablePath,
-                                         GpDbConnection&            aDbConn,
-                                         const GpJsonMapperFlags    aFlags)
+void    GpDbQueryMapper::SInsertAsJsonb
+(
+    const GpDbQueryCacheUID&    aCacheUID,
+    const GpTypeStructBase&     aStruct,
+    std::string_view            aTablePath,
+    GpDbConnection&             aDbConn,
+    const GpJsonMapperFlags     aFlags
+)
 {
     const auto& cacheVal = sMapperCache.Get
     (
@@ -263,8 +280,11 @@ void    GpDbQueryMapper::SInsertAsJsonb (const GpDbQueryCacheUID&   aCacheUID,
     aDbConn.Execute(dbQuery, 0_cnt);
 }
 
-void    GpDbQueryMapper::SWriteRowValues (GpDbQuery&                aDbQuery,
-                                          const GpTypeStructBase&   aStruct)
+void    GpDbQueryMapper::SWriteRowValues
+(
+    GpDbQuery&              aDbQuery,
+    const GpTypeStructBase& aStruct
+)
 {
     const GpTypeStructInfo& typeInfo = aStruct.TypeInfo();
 
@@ -283,14 +303,21 @@ void    GpDbQueryMapper::SWriteRowValues (GpDbQuery&                aDbQuery,
             case GpType::S_INT_32:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt32(aStruct)));  break;
             case GpType::U_INT_64:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_UInt64(aStruct)));  break;
             case GpType::S_INT_64:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt64(aStruct)));  break;
+            case GpType::UNIX_TS_S: aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt64(aStruct)));  break;
+            case GpType::UNIX_TS_MS:aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt64(aStruct)));  break;
             case GpType::DOUBLE:    THROW_GPE("Unsupported type DOUBLE"_sv); break;
             case GpType::FLOAT:     THROW_GPE("Unsupported type FLOAT"_sv); break;
             case GpType::BOOLEAN:   aDbQuery.NextBoolean(propInfo.Value_Bool(aStruct)); break;
             case GpType::UUID:      aDbQuery.NextUUID(propInfo.Value_UUID(aStruct)); break;
             case GpType::STRING:    aDbQuery.NextStrValue(propInfo.Value_String(aStruct)); break;
             case GpType::BLOB:      aDbQuery.NextBLOB(propInfo.Value_BLOB(aStruct)); break;
-            case GpType::STRUCT:    THROW_GPE("Unsupported type STRUCT"_sv); break;
-            case GpType::STRUCT_SP: THROW_GPE("Unsupported type STRUCT_SP"_sv); break;
+            case GpType::STRUCT:    aDbQuery.NextStrJson(GpJsonMapper::SToJson(propInfo.Value_Struct(aStruct), {GpJsonMapperFlag::WRITE_STRUCT_UID})); break;
+            case GpType::STRUCT_SP:
+            {
+                const auto& structSP = propInfo.Value_StructSP(aStruct);
+                if (structSP.IsNULL()) aDbQuery.NextNULL();
+                else aDbQuery.NextStrJson(GpJsonMapper::SToJson(structSP.VCn(), {GpJsonMapperFlag::WRITE_STRUCT_UID}));
+            } break;
             case GpType::ENUM:      aDbQuery.NextStrValue(propInfo.Value_Enum(aStruct).ToString()); break;
             case GpType::ENUM_FLAGS:aDbQuery.NextStrValueArray(propInfo.Value_EnumFlags(aStruct));  break;
             case GpType::NOT_SET:
@@ -302,19 +329,26 @@ void    GpDbQueryMapper::SWriteRowValues (GpDbQuery&                aDbQuery,
     }
 }
 
-SInt64  GpDbQueryMapper::SRowToVersion (const GpDbQueryRes& aDbQueryRes,
-                                        const count_t       aColOffset)
+SInt64  GpDbQueryMapper::SRowToVersion
+(
+    const GpDbQueryRes& aDbQueryRes,
+    const count_t       aRowId,
+    const count_t       aColOffset
+)
 {
     const count_t   colId   = aColOffset;
-    const SInt64    version = aDbQueryRes.GetInt64(0_cnt, colId, std::nullopt);
+    const SInt64    version = aDbQueryRes.GetInt64(aRowId, colId, std::nullopt);
 
     return version;
 }
 
-count_t GpDbQueryMapper::SRowToStruct (const GpDbQueryRes&  aDbQueryRes,
-                                       GpTypeStructBase&    aStruct,
-                                       const count_t        aRowId,
-                                       const count_t        aColOffset)
+count_t GpDbQueryMapper::SRowToStruct
+(
+    const GpDbQueryRes& aDbQueryRes,
+    GpTypeStructBase&   aStruct,
+    const count_t       aRowId,
+    const count_t       aColOffset
+)
 {
     const GpTypeStructInfo& typeInfo    = aStruct.TypeInfo();
     count_t                 colId       = aColOffset;
@@ -334,14 +368,38 @@ count_t GpDbQueryMapper::SRowToStruct (const GpDbQueryRes&  aDbQueryRes,
             case GpType::S_INT_32:  propInfo.Value_SInt32(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_32>();  break;
             case GpType::U_INT_64:  propInfo.Value_UInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<u_int_64>();  break;
             case GpType::S_INT_64:  propInfo.Value_SInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_64>();  break;
+            case GpType::UNIX_TS_S: propInfo.Value_SInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_64>();  break;
+            case GpType::UNIX_TS_MS:propInfo.Value_SInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_64>();  break;
             case GpType::DOUBLE:    THROW_GPE("Unsupported type DOUBLE"_sv); break;
             case GpType::FLOAT:     THROW_GPE("Unsupported type FLOAT"_sv); break;
             case GpType::BOOLEAN:   propInfo.Value_Bool(aStruct) = aDbQueryRes.GetBoolean(aRowId, colId++, false);  break;
             case GpType::UUID:      propInfo.Value_UUID(aStruct) = aDbQueryRes.GetUUID(aRowId, colId++, GpUUID());  break;
             case GpType::STRING:    propInfo.Value_String(aStruct) = aDbQueryRes.GetStr(aRowId, colId++, ""_sv); break;
             case GpType::BLOB:      propInfo.Value_BLOB(aStruct) = GpBytesArrayUtils::SMake(aDbQueryRes.GetBLOB(aRowId, colId++, {})); break;
-            case GpType::STRUCT:    THROW_GPE("Unsupported type STRUCT"_sv); break;
-            case GpType::STRUCT_SP: THROW_GPE("Unsupported type STRUCT_SP"_sv); break;
+            case GpType::STRUCT:
+            {
+                std::string_view    jsonStr     = aDbQueryRes.GetJsonStr(aRowId, colId++, ""_sv);
+                auto&               structVal   = propInfo.Value_Struct(aStruct);
+
+                if (jsonStr.length() > 0)
+                {
+                    GpJsonMapper::SFromJson(jsonStr, structVal);
+                }
+            } break;
+            case GpType::STRUCT_SP:
+            {
+                std::string_view    jsonStr     = aDbQueryRes.GetJsonStr(aRowId, colId++, ""_sv);
+                auto&               structVal   = propInfo.Value_StructSP(aStruct);
+
+                if (jsonStr.length() > 0)
+                {
+                    const GpTypeStructInfo& structTypeInfo = GpTypeManager::S().Find(propInfo.TypeUID()).value();
+                    structVal = GpJsonMapper::SFromJson(jsonStr, structTypeInfo);
+                } else
+                {
+                    structVal.Clear();
+                }
+            } break;
             case GpType::ENUM:      propInfo.Value_Enum(aStruct).FromString(aDbQueryRes.GetStr(aRowId, colId++, std::nullopt));break;
             case GpType::ENUM_FLAGS:propInfo.Value_EnumFlags(aStruct).FromStringArray(aDbQueryRes.GetStrArray(aRowId, colId++, std::nullopt));break;
             case GpType::NOT_SET:               
@@ -355,13 +413,16 @@ count_t GpDbQueryMapper::SRowToStruct (const GpDbQueryRes&  aDbQueryRes,
     return colId;
 }
 
-void    GpDbQueryMapper::SJsonToStruct (GpDbQueryRes&       aDbQueryRes,
-                                        GpTypeStructBase&   aStruct,
-                                        const count_t       aRowId,
-                                        const count_t       aColOffset)
+void    GpDbQueryMapper::SJsonToStruct
+(
+    const GpDbQueryRes& aDbQueryRes,
+    GpTypeStructBase&   aStruct,
+    const count_t       aRowId,
+    const count_t       aColOffset
+)
 {
-    GpRawPtrCharRW jsonStrRW = aDbQueryRes.GetJsonStrRW(aRowId, aColOffset, std::nullopt);
-    GpJsonMapper::SFromJsonInsitu(jsonStrRW, aStruct);
+    std::string_view jsonStr = aDbQueryRes.GetJsonStr(aRowId, aColOffset, std::nullopt);
+    GpJsonMapper::SFromJson(jsonStr, aStruct);
 }
 
 }//namespace GPlatform
