@@ -88,7 +88,11 @@ template<typename T>
 
     if (strVal.length() == 0)
     {
-        THROW_GPE_COND_CHECK_M(aOnNullValue.has_value(), "Value on ["_sv + aRowId + ", "_sv + aColId + "] is empty"_sv);
+        THROW_GPE_COND
+        (
+            aOnNullValue.has_value(),
+            "Value on ["_sv + aRowId + ", "_sv + aColId + "] is empty"_sv
+        );
         return aOnNullValue.value();
     }
 

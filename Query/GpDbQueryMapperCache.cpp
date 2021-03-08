@@ -10,8 +10,11 @@ GpDbQueryMapperCache::~GpDbQueryMapperCache (void) noexcept
 {
 }
 
-const GpDbQueryMapperCache::CacheValueT&    GpDbQueryMapperCache::Get (const CacheKeyT& aUID,
-                                                                       GenFnT           aGenFn)
+const GpDbQueryMapperCache::CacheValueT&    GpDbQueryMapperCache::Get
+(
+    const CacheKeyT&    aUID,
+    GenFnT              aGenFn
+)
 {
     return iCache.FindOrRegister(aUID.Value(), [&](){return aGenFn();});
 }

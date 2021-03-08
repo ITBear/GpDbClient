@@ -212,7 +212,7 @@ void    GpDbQueryMapper::SInsertAsRowVec
 )
 {
     //TODO implement
-    THROW_NOT_IMPLEMENTED();
+    THROW_GPE_NOT_IMPLEMENTED();
 
     /*if (aStructVec.size() == 0)
     {
@@ -290,8 +290,11 @@ void    GpDbQueryMapper::SWriteRowValues
 
     for (const GpTypePropInfo& propInfo: typeInfo.Props())
     {
-        THROW_GPE_COND_CHECK_M(propInfo.Container() == GpTypeContainer::NO,
-                               "Container of property '"_sv + typeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv);
+        THROW_GPE_COND
+        (
+            propInfo.Container() == GpTypeContainer::NO,
+            "Container of property '"_sv + typeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv
+        );
 
         switch (propInfo.Type())
         {
@@ -355,8 +358,11 @@ count_t GpDbQueryMapper::SRowToStruct
 
     for (const GpTypePropInfo& propInfo: typeInfo.Props())
     {
-        THROW_GPE_COND_CHECK_M(propInfo.Container() == GpTypeContainer::NO,
-                               "Container of property '"_sv + typeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv);
+        THROW_GPE_COND
+        (
+            propInfo.Container() == GpTypeContainer::NO,
+            "Container of property '"_sv + typeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv
+        );
 
         switch (propInfo.Type())
         {

@@ -811,7 +811,7 @@ GpVector<GpDbQueryBuilder::TypeInfo>    GpDbQueryBuilder::SFromTypeInfo (const G
 
     for (const GpTypePropInfo& propInfo: aTypeInfo.Props())
     {
-        THROW_GPE_COND_CHECK_M
+        THROW_GPE_COND
         (
             propInfo.Container() == GpTypeContainer::NO,
             "Container of property '"_sv + aTypeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv

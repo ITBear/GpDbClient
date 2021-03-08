@@ -52,7 +52,11 @@ GpDbManager&    GpDbManagerCatalog::Manager (std::string_view aName)
 {
     auto res = iManagers.Find(aName);
 
-    THROW_GPE_COND_CHECK_M(res.has_value(), "DB manager not found by name '"_sv + aName + "'"_sv);
+    THROW_GPE_COND
+    (
+        res.has_value(),
+        "DB manager not found by name '"_sv + aName + "'"_sv
+    );
 
     return res.value().get().V();
 }
@@ -67,7 +71,11 @@ GpDbDriverFactory&  GpDbManagerCatalog::DriverFactory (std::string_view aName)
 {
     auto res = iDrivers.Find(aName);
 
-    THROW_GPE_COND_CHECK_M(res.has_value(), "DB driver factory not found by name '"_sv + aName + "'"_sv);
+    THROW_GPE_COND
+    (
+        res.has_value(),
+        "DB driver factory not found by name '"_sv + aName + "'"_sv
+    );
 
     return res.value().get().V();
 }

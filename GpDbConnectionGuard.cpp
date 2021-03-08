@@ -49,7 +49,7 @@ GpDbConnection& GpDbConnectionGuard::Connection (void)
     if (iConnection.IsNULL())
     {
         auto res = iManager.Acquire();
-        THROW_GPE_COND_CHECK_M(res.has_value(), "DB connection limit exceeded"_sv);
+        THROW_GPE_COND(res.has_value(), "DB connection limit exceeded"_sv);
         iConnection = res.value();
     }
 
