@@ -39,7 +39,7 @@ public:
 public:
     using CacheKeyT     = GpDbQueryCacheUID;
     using CacheValueT   = GpDbQueryMapperCacheValue;
-    using CacheT        = GpElementsCatalog<GpUUID, CacheValueT, GpMap>;
+    using CacheT        = GpElementsCatalog<GpUUID, CacheValueT>;
     using GenFnT        = std::function<GpDbQueryMapperCacheValue()>;
 
 public:

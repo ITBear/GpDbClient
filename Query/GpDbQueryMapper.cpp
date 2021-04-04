@@ -293,7 +293,7 @@ void    GpDbQueryMapper::SWriteRowValues
         THROW_GPE_COND
         (
             propInfo.Container() == GpTypeContainer::NO,
-            "Container of property '"_sv + typeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv
+            [&](){return "Container of property '"_sv + typeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv;}
         );
 
         switch (propInfo.Type())
@@ -361,7 +361,7 @@ count_t GpDbQueryMapper::SRowToStruct
         THROW_GPE_COND
         (
             propInfo.Container() == GpTypeContainer::NO,
-            "Container of property '"_sv + typeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv
+            [&](){return "Container of property '"_sv + typeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv;}
         );
 
         switch (propInfo.Type())

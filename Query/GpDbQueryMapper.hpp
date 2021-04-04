@@ -988,15 +988,20 @@ typename T::C::Vec::SP  GpDbQueryMapper::SReadQueryResVecSP (const GpDbQueryRes&
 }
 
 template<typename T>
-T   GpDbQueryMapper::SReadQueryResOne (const GpDbQueryRes&  aDbQueryRes,
-                                       ReadFnRefT<T>            aParserFn)
+T   GpDbQueryMapper::SReadQueryResOne
+(
+    const GpDbQueryRes& aDbQueryRes,
+    ReadFnRefT<T>       aParserFn
+)
 {
     const count_t rowsCount = aDbQueryRes.RowsCount();
 
-    if (rowsCount == 0_cnt)
-    {
-        THROW_DBE(GpDbExceptionCode::EMPTY_QUERY_RES);
-    }
+    THROW_DBE_COND
+    (
+        rowsCount > 0_cnt,
+        GpDbExceptionCode::EMPTY_QUERY_RES,
+        ""_sv
+    );
 
     return aParserFn(0_cnt, aDbQueryRes);
 }

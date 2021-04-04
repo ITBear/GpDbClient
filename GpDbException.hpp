@@ -30,8 +30,44 @@ private:
     const CodeTE            iCode;
 };
 
+[[noreturn]] inline void    THROW_DBE
+(
+    const GpDbExceptionCode::EnumT  aCode,
+    std::string_view                aMsg,
+    const SourceLocationT&          aSourceLocation = SourceLocationT::current()
+)
+{
+    throw GpDbException(aCode, aMsg, aSourceLocation);
+}
+
+inline void THROW_DBE_COND
+(
+    const bool                      aCondition,
+    const GpDbExceptionCode::EnumT  aCode,
+    std::string_view                aMsg,
+    const SourceLocationT&          aSourceLocation = SourceLocationT::current()
+)
+{
+    if (!aCondition)
+    {
+        throw GpDbException(aCode, aMsg, aSourceLocation);
+    }
+}
+
+inline void THROW_DBE_COND
+(
+    const bool                      aCondition,
+    const GpDbExceptionCode::EnumT  aCode,
+    ThrowMsgGenT                    aMsgGenFn,
+    const SourceLocationT&          aSourceLocation = SourceLocationT::current()
+)
+{
+    if (!aCondition)
+    {
+        throw GpDbException(aCode, aMsgGenFn(), aSourceLocation);
+    }
+}
+
 }//namespace GPlatform
 
-#define THROW_DBE(CODE)                         throw ::GPlatform::GpDbException((CODE), ""_sv)
-#define THROW_DBE_COND_CHECK(COND, CODE)        if (!(COND)) throw ::GPlatform::GpDbException((CODE), ("Condition not met: "#COND))
-#define THROW_DBE_COND_CHECK_M(COND, CODE, MSG) if (!(COND)) throw ::GPlatform::GpDbException((CODE), (MSG))
+

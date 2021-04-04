@@ -91,7 +91,7 @@ template<typename T>
         THROW_GPE_COND
         (
             aOnNullValue.has_value(),
-            "Value on ["_sv + aRowId + ", "_sv + aColId + "] is empty"_sv
+            [&](){return "Value on ["_sv + aRowId + ", "_sv + aColId + "] is empty"_sv;}
         );
         return aOnNullValue.value();
     }

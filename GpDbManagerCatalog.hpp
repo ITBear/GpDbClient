@@ -15,8 +15,8 @@ public:
     CLASS_DECLARE_DEFAULTS(GpDbManagerCatalog)
     CLASS_TAG(THREAD_SAFE)
 
-    using ManagersT = GpElementsCatalog<std::string_view, GpSP<GpDbManager>, GpMap>;
-    using DriversT  = GpElementsCatalog<std::string_view, GpSP<GpDbDriverFactory>, GpMap>;
+    using ManagersT = GpElementsCatalog<std::string_view, GpSP<GpDbManager>>;
+    using DriversT  = GpElementsCatalog<std::string_view, GpSP<GpDbDriverFactory>>;
 
 private:
                                 GpDbManagerCatalog      (void) noexcept;

@@ -288,8 +288,11 @@ GpDbQueryBuilder&   GpDbQueryBuilder::IN (void)
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::ANY (const GpDbQueryValType::EnumT    aValueType,
-                                           std::string_view                 aTypeCast)
+GpDbQueryBuilder&   GpDbQueryBuilder::ANY
+(
+    const GpDbQueryValType::EnumT   aValueType,
+    std::string_view                aTypeCast
+)
 {
     CheckForSpace();
 
@@ -311,8 +314,11 @@ GpDbQueryBuilder&   GpDbQueryBuilder::BETWEEN (void)
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::BETWEEN (const GpDbQueryValType::EnumT aValueTypeA,
-                                               const GpDbQueryValType::EnumT aValueTypeB)
+GpDbQueryBuilder&   GpDbQueryBuilder::BETWEEN
+(
+    const GpDbQueryValType::EnumT aValueTypeA,
+    const GpDbQueryValType::EnumT aValueTypeB
+)
 {
     BETWEEN().VALUE(aValueTypeA).AND().VALUE(aValueTypeB);
 
@@ -600,8 +606,11 @@ GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const GpDbQueryValType::EnumT aValu
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const GpDbQueryValType::EnumT  aValueType,
-                                             std::string_view               aTypeCast)
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE
+(
+    const GpDbQueryValType::EnumT   aValueType,
+    std::string_view                aTypeCast
+)
 {
     CheckForSpace();
 
@@ -624,8 +633,11 @@ GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (std::string_view aValue)
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (std::string_view   aValue,
-                                             std::string_view   aTypeCast)
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE
+(
+    std::string_view    aValue,
+    std::string_view    aTypeCast
+)
 {
     CheckForSpace();
 
@@ -665,8 +677,11 @@ GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const bool aValue)
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const GpEnum&      aValue,
-                                             std::string_view   aTypeCast)
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE
+(
+    const GpEnum&       aValue,
+    std::string_view    aTypeCast
+)
 {
     return VALUE(aValue.ToString(), aTypeCast);
 }
@@ -681,7 +696,11 @@ GpDbQueryBuilder&   GpDbQueryBuilder::RAW (std::string_view aStr)
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_NAMES (std::string_view aTableName, const GpTypeStructInfo& aTypeInfo)
+GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_NAMES
+(
+    std::string_view        aTableName,
+    const GpTypeStructInfo& aTypeInfo
+)
 {
     CheckForSpace();
 
@@ -733,7 +752,11 @@ GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_BINDS (const GpTypeStructInfo
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_ASSIGN (std::string_view aTableName, const GpTypeStructInfo& aTypeInfo)
+GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_ASSIGN
+(
+    std::string_view        aTableName,
+    const GpTypeStructInfo& aTypeInfo
+)
 {
     CheckForSpace();
 
@@ -781,8 +804,11 @@ std::string GpDbQueryBuilder::AddValueBind (const GpDbQueryValType::EnumT aValue
     return AddValueBind(aValueType, sBindStrs.at(size_t(aValueType)));
 }
 
-std::string GpDbQueryBuilder::AddValueBind (const GpDbQueryValType::EnumT   aValueType,
-                                            std::string_view                aTypeCast)
+std::string GpDbQueryBuilder::AddValueBind
+(
+    const GpDbQueryValType::EnumT   aValueType,
+    std::string_view                aTypeCast
+)
 {
     iValuesTypes.emplace_back(aValueType);
 
@@ -814,7 +840,7 @@ GpVector<GpDbQueryBuilder::TypeInfo>    GpDbQueryBuilder::SFromTypeInfo (const G
         THROW_GPE_COND
         (
             propInfo.Container() == GpTypeContainer::NO,
-            "Container of property '"_sv + aTypeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv
+            [&](){return "Container of property '"_sv + aTypeInfo.Name() + "."_sv + propInfo.Name() + "' must be NO"_sv;}
         );
 
         std::string             valueBind;
