@@ -27,7 +27,11 @@ public:
     const ValuesTypesVecT&          ValuesTypes         (void) const noexcept {return iValuesTypes;}
     const ValuesVecT&               Values              (void) const noexcept {return iValues;}
 
+    GpDbQuery&                      NextInt16           (const SInt16                       aValue);
+    GpDbQuery&                      NextInt32           (const SInt32                       aValue);
     GpDbQuery&                      NextInt64           (const SInt64                       aValue);
+    GpDbQuery&                      NextDouble          (const double                       aValue);
+    GpDbQuery&                      NextFloat           (const float                        aValue);
     GpDbQuery&                      NextStrValue        (std::string_view                   aValue);
     GpDbQuery&                      NextStrValue        (std::string&&                      aValue);
     GpDbQuery&                      NextStrValueArray   (const GpVector<std::string_view>&  aValue);
@@ -54,7 +58,11 @@ public:
     template<typename T>
     GpDbQueryValType::EnumT         NextUnpack      (T aValue);
 
+    SInt16                          Int16           (const count_t aId) const;
+    SInt32                          Int32           (const count_t aId) const;
     SInt64                          Int64           (const count_t aId) const;
+    double                          Double          (const count_t aId) const;
+    float                           Float           (const count_t aId) const;
     std::string_view                StrValue        (const count_t aId) const;
     const GpVector<std::string>&    StrValueArray   (const count_t aId) const;
     std::string_view                StrName         (const count_t aId) const;
@@ -102,9 +110,21 @@ template<GpDbQueryValType::EnumT E,
          typename                T>
 GpDbQuery&  GpDbQuery::Next (T aValue)
 {
-    if constexpr(E == GpDbQueryValType::INT_64)
+    if constexpr(E == GpDbQueryValType::INT_16)
+    {
+        return NextInt16(std::forward<T>(aValue));
+    } else if constexpr(E == GpDbQueryValType::INT_32)
+    {
+        return NextInt32(std::forward<T>(aValue));
+    } else if constexpr(E == GpDbQueryValType::INT_64)
     {
         return NextInt64(std::forward<T>(aValue));
+    } else if constexpr(E == GpDbQueryValType::DOUBLE)
+    {
+        return NextDouble(std::forward<T>(aValue));
+    } else if constexpr(E == GpDbQueryValType::FLOAT)
+    {
+        return NextFloat(std::forward<T>(aValue));
     } else if constexpr(E == GpDbQueryValType::STRING_VALUE)
     {
         return NextStrValue(std::forward<T>(aValue));

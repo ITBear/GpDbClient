@@ -7,15 +7,21 @@ iQueryStr(aQueryStr)
 {
 }
 
-GpDbQuery::GpDbQuery (std::string_view          aQueryStr,
-                      const ValuesTypesVecT&    aValuesTypes):
+GpDbQuery::GpDbQuery
+(
+    std::string_view        aQueryStr,
+    const ValuesTypesVecT&  aValuesTypes
+):
 iQueryStr(aQueryStr),
 iValuesTypes(aValuesTypes)
 {
 }
 
-GpDbQuery::GpDbQuery (std::string&&     aQueryStr,
-                      ValuesTypesVecT&& aValuesTypes) noexcept:
+GpDbQuery::GpDbQuery
+(
+    std::string&&       aQueryStr,
+    ValuesTypesVecT&&   aValuesTypes
+) noexcept:
 iQueryStr(std::move(aQueryStr)),
 iValuesTypes(std::move(aValuesTypes))
 {
@@ -25,9 +31,33 @@ GpDbQuery::~GpDbQuery (void) noexcept
 {
 }
 
+GpDbQuery&  GpDbQuery::NextInt16 (const SInt16 aValue)
+{
+    _SetNext<SInt16, GpDbQueryValType::INT_16>(aValue);
+    return *this;
+}
+
+GpDbQuery&  GpDbQuery::NextInt32 (const SInt32 aValue)
+{
+    _SetNext<SInt32, GpDbQueryValType::INT_32>(aValue);
+    return *this;
+}
+
 GpDbQuery&  GpDbQuery::NextInt64 (const SInt64 aValue)
 {
     _SetNext<SInt64, GpDbQueryValType::INT_64>(aValue);
+    return *this;
+}
+
+GpDbQuery&  GpDbQuery::NextDouble (const double aValue)
+{
+    _SetNext<double, GpDbQueryValType::DOUBLE>(aValue);
+    return *this;
+}
+
+GpDbQuery&  GpDbQuery::NextFloat (const float aValue)
+{
+    _SetNext<float, GpDbQueryValType::FLOAT>(aValue);
     return *this;
 }
 
@@ -130,9 +160,29 @@ GpDbQuery&  GpDbQuery::NextNULL (void)
     return *this;
 }
 
+SInt16  GpDbQuery::Int16 (const count_t aId) const
+{
+    return std::get<SInt16>(iValues.at(aId.As<size_t>()));
+}
+
+SInt32  GpDbQuery::Int32 (const count_t aId) const
+{
+    return std::get<SInt32>(iValues.at(aId.As<size_t>()));
+}
+
 SInt64  GpDbQuery::Int64 (const count_t aId) const
 {
     return std::get<SInt64>(iValues.at(aId.As<size_t>()));
+}
+
+double  GpDbQuery::Double (const count_t aId) const
+{
+    return std::get<double>(iValues.at(aId.As<size_t>()));
+}
+
+float   GpDbQuery::Float (const count_t aId) const
+{
+    return std::get<float>(iValues.at(aId.As<size_t>()));
 }
 
 std::string_view    GpDbQuery::StrValue (const count_t aId) const

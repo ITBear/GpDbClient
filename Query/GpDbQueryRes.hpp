@@ -28,6 +28,16 @@ public:
     virtual count_t                 ColumnsCount    (void) const = 0;
 
     [[nodiscard]]
+    virtual SInt16                  GetInt16        (const count_t          aRowId,
+                                                     const count_t          aColId,
+                                                     std::optional<SInt16>  aOnNullValue) const = 0;
+
+    [[nodiscard]]
+    virtual SInt32                  GetInt32        (const count_t          aRowId,
+                                                     const count_t          aColId,
+                                                     std::optional<SInt32>  aOnNullValue) const = 0;
+
+    [[nodiscard]]
     virtual SInt64                  GetInt64        (const count_t          aRowId,
                                                      const count_t          aColId,
                                                      std::optional<SInt64>  aOnNullValue) const = 0;

@@ -79,6 +79,7 @@ public:
     GpDbQueryBuilder&           UPDATE              (std::string_view aTableName);
     GpDbQueryBuilder&           SET                 (void);
     GpDbQueryBuilder&           ORDER_BY            (void);
+    GpDbQueryBuilder&           ORDER_BY            (std::string_view aParamName);
     GpDbQueryBuilder&           LIMIT               (const count_t aValue);
     GpDbQueryBuilder&           LIMIT               (const GpDbQueryValType::EnumT aValueType);
     GpDbQueryBuilder&           OFFSET              (const count_t aValue);
@@ -138,18 +139,18 @@ consteval GpDbQueryValType::EnumT GpDbQueryBuilder::SDetectValType (void)
     constexpr GpType::EnumT t = GpTypeUtils::SDetectType<T>();
 
          if constexpr (t == GpType::NOT_SET)    GpThrowCe<T>("Unsupported type");
-    else if constexpr (t == GpType::U_INT_8)    return GpDbQueryValType::INT_64;
-    else if constexpr (t == GpType::S_INT_8)    return GpDbQueryValType::INT_64;
-    else if constexpr (t == GpType::U_INT_16)   return GpDbQueryValType::INT_64;
-    else if constexpr (t == GpType::S_INT_16)   return GpDbQueryValType::INT_64;
-    else if constexpr (t == GpType::U_INT_32)   return GpDbQueryValType::INT_64;
-    else if constexpr (t == GpType::S_INT_32)   return GpDbQueryValType::INT_64;
+    else if constexpr (t == GpType::U_INT_8)    return GpDbQueryValType::INT_16;
+    else if constexpr (t == GpType::S_INT_8)    return GpDbQueryValType::INT_16;
+    else if constexpr (t == GpType::U_INT_16)   return GpDbQueryValType::INT_16;
+    else if constexpr (t == GpType::S_INT_16)   return GpDbQueryValType::INT_16;
+    else if constexpr (t == GpType::U_INT_32)   return GpDbQueryValType::INT_32;
+    else if constexpr (t == GpType::S_INT_32)   return GpDbQueryValType::INT_32;
     else if constexpr (t == GpType::U_INT_64)   return GpDbQueryValType::INT_64;
     else if constexpr (t == GpType::S_INT_64)   return GpDbQueryValType::INT_64;
     else if constexpr (t == GpType::UNIX_TS_S)  return GpDbQueryValType::INT_64;
     else if constexpr (t == GpType::UNIX_TS_MS) return GpDbQueryValType::INT_64;
-    else if constexpr (t == GpType::DOUBLE)     GpThrowCe<T>("Unsupported type");
-    else if constexpr (t == GpType::FLOAT)      GpThrowCe<T>("Unsupported type");
+    else if constexpr (t == GpType::DOUBLE)     return GpDbQueryValType::DOUBLE;
+    else if constexpr (t == GpType::FLOAT)      return GpDbQueryValType::FLOAT;
     else if constexpr (t == GpType::BOOLEAN)    return GpDbQueryValType::BOOLEAN;
     else if constexpr (t == GpType::UUID)       return GpDbQueryValType::UUID;
     else if constexpr (t == GpType::STRING)     return GpDbQueryValType::STRING_VALUE;

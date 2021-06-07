@@ -4,7 +4,11 @@ namespace GPlatform {
 
 GpArray<std::string, GpDbQueryValType::SCount().As<size_t>()>   GpDbQueryBuilder::sBindStrs
 {
-    "bigint",   //INT_64,
+    "int2",     //INT_16,
+    "int4",     //INT_32,
+    "int8",     //INT_64,
+    "float8",   //DOUBLE,
+    "float4",   //FLOAT,
     "",         //STRING_VALUE,::text
     "",         //STRING_VALUE_ARRAY,::...[]
     "",         //STRING_NAME,
@@ -455,6 +459,13 @@ GpDbQueryBuilder&   GpDbQueryBuilder::ORDER_BY (void)
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::ORDER_BY (std::string_view aParamName)
+{
+    ORDER_BY().PARAM(aParamName);
+
+    return *this;
+}
+
 GpDbQueryBuilder&   GpDbQueryBuilder::LIMIT (const count_t aValue)
 {
     CheckForSpace();
@@ -851,19 +862,35 @@ GpVector<GpDbQueryBuilder::TypeInfo>    GpDbQueryBuilder::SFromTypeInfo (const G
             case GpType::U_INT_8:    [[fallthrough]];
             case GpType::S_INT_8:    [[fallthrough]];
             case GpType::U_INT_16:   [[fallthrough]];
-            case GpType::S_INT_16:   [[fallthrough]];
+            case GpType::S_INT_16:
+            {
+                valueType   = GpDbQueryValType::INT_16;
+                valueBind   = "::int2"_sv;
+            } break;
             case GpType::U_INT_32:   [[fallthrough]];
-            case GpType::S_INT_32:   [[fallthrough]];
+            case GpType::S_INT_32:
+            {
+                valueType   = GpDbQueryValType::INT_32;
+                valueBind   = "::int4"_sv;
+            } break;
             case GpType::U_INT_64:   [[fallthrough]];
             case GpType::S_INT_64:   [[fallthrough]];
             case GpType::UNIX_TS_S:  [[fallthrough]];
             case GpType::UNIX_TS_MS:
             {
                 valueType   = GpDbQueryValType::INT_64;
-                valueBind   = "::bigint"_sv;
+                valueBind   = "::int8"_sv;
             } break;
-            case GpType::DOUBLE:    THROW_GPE("Unsupported type DOUBLE"_sv); break;
-            case GpType::FLOAT:     THROW_GPE("Unsupported type FLOAT"_sv); break;
+            case GpType::DOUBLE:
+            {
+                valueType   = GpDbQueryValType::DOUBLE;
+                valueBind   = "::float8"_sv;
+            } break;
+            case GpType::FLOAT:
+            {
+                valueType   = GpDbQueryValType::FLOAT;
+                valueBind   = "::float4"_sv;
+            } break;
             case GpType::BOOLEAN:
             {
                 valueType   = GpDbQueryValType::BOOLEAN;

@@ -5,7 +5,11 @@
 namespace GPlatform {
 
 GP_ENUM(GPDBCLIENT_API, GpDbQueryValType,
+    INT_16,
+    INT_32,
     INT_64,
+    DOUBLE,
+    FLOAT,
     STRING_VALUE,
     STRING_VALUE_ARRAY,
     STRING_NAME,

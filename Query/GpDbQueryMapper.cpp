@@ -298,12 +298,12 @@ void    GpDbQueryMapper::SWriteRowValues
 
         switch (propInfo.Type())
         {
-            case GpType::U_INT_8:   aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_UInt8(aStruct)));   break;
-            case GpType::S_INT_8:   aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt8(aStruct)));   break;
-            case GpType::U_INT_16:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_UInt16(aStruct)));  break;
-            case GpType::S_INT_16:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt16(aStruct)));  break;
-            case GpType::U_INT_32:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_UInt32(aStruct)));  break;
-            case GpType::S_INT_32:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt32(aStruct)));  break;
+            case GpType::U_INT_8:   aDbQuery.NextInt16(SInt16::SMake(propInfo.Value_UInt8(aStruct)));   break;
+            case GpType::S_INT_8:   aDbQuery.NextInt16(SInt16::SMake(propInfo.Value_SInt8(aStruct)));   break;
+            case GpType::U_INT_16:  aDbQuery.NextInt16(SInt16::SMake(propInfo.Value_UInt16(aStruct)));  break;
+            case GpType::S_INT_16:  aDbQuery.NextInt16(SInt16::SMake(propInfo.Value_SInt16(aStruct)));  break;
+            case GpType::U_INT_32:  aDbQuery.NextInt32(SInt32::SMake(propInfo.Value_UInt32(aStruct)));  break;
+            case GpType::S_INT_32:  aDbQuery.NextInt32(SInt32::SMake(propInfo.Value_SInt32(aStruct)));  break;
             case GpType::U_INT_64:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_UInt64(aStruct)));  break;
             case GpType::S_INT_64:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt64(aStruct)));  break;
             case GpType::UNIX_TS_S: aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt64(aStruct)));  break;
@@ -366,12 +366,12 @@ count_t GpDbQueryMapper::SRowToStruct
 
         switch (propInfo.Type())
         {
-            case GpType::U_INT_8:   propInfo.Value_UInt8(aStruct)  = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<u_int_8>();   break;
-            case GpType::S_INT_8:   propInfo.Value_SInt8(aStruct)  = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_8>();   break;
-            case GpType::U_INT_16:  propInfo.Value_UInt16(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<u_int_16>();  break;
-            case GpType::S_INT_16:  propInfo.Value_SInt16(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_16>();  break;
-            case GpType::U_INT_32:  propInfo.Value_UInt32(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<u_int_32>();  break;
-            case GpType::S_INT_32:  propInfo.Value_SInt32(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_32>();  break;
+            case GpType::U_INT_8:   propInfo.Value_UInt8(aStruct)  = aDbQueryRes.GetInt16(aRowId, colId++, 0_s_int_16).As<u_int_8>();   break;
+            case GpType::S_INT_8:   propInfo.Value_SInt8(aStruct)  = aDbQueryRes.GetInt16(aRowId, colId++, 0_s_int_16).As<s_int_8>();   break;
+            case GpType::U_INT_16:  propInfo.Value_UInt16(aStruct) = aDbQueryRes.GetInt16(aRowId, colId++, 0_s_int_16).As<u_int_16>();  break;
+            case GpType::S_INT_16:  propInfo.Value_SInt16(aStruct) = aDbQueryRes.GetInt16(aRowId, colId++, 0_s_int_16).As<s_int_16>();  break;
+            case GpType::U_INT_32:  propInfo.Value_UInt32(aStruct) = aDbQueryRes.GetInt32(aRowId, colId++, 0_s_int_32).As<u_int_32>();  break;
+            case GpType::S_INT_32:  propInfo.Value_SInt32(aStruct) = aDbQueryRes.GetInt32(aRowId, colId++, 0_s_int_32).As<s_int_32>();  break;
             case GpType::U_INT_64:  propInfo.Value_UInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<u_int_64>();  break;
             case GpType::S_INT_64:  propInfo.Value_SInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_64>();  break;
             case GpType::UNIX_TS_S: propInfo.Value_SInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_64>();  break;
