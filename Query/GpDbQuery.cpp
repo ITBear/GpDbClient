@@ -31,21 +31,21 @@ GpDbQuery::~GpDbQuery (void) noexcept
 {
 }
 
-GpDbQuery&  GpDbQuery::NextInt16 (const SInt16 aValue)
+GpDbQuery&  GpDbQuery::NextInt16 (const s_int_16 aValue)
 {
-    _SetNext<SInt16, GpDbQueryValType::INT_16>(aValue);
+    _SetNext<s_int_16, GpDbQueryValType::INT_16>(aValue);
     return *this;
 }
 
-GpDbQuery&  GpDbQuery::NextInt32 (const SInt32 aValue)
+GpDbQuery&  GpDbQuery::NextInt32 (const s_int_32 aValue)
 {
-    _SetNext<SInt32, GpDbQueryValType::INT_32>(aValue);
+    _SetNext<s_int_32, GpDbQueryValType::INT_32>(aValue);
     return *this;
 }
 
-GpDbQuery&  GpDbQuery::NextInt64 (const SInt64 aValue)
+GpDbQuery&  GpDbQuery::NextInt64 (const s_int_64 aValue)
 {
-    _SetNext<SInt64, GpDbQueryValType::INT_64>(aValue);
+    _SetNext<s_int_64, GpDbQueryValType::INT_64>(aValue);
     return *this;
 }
 
@@ -160,19 +160,19 @@ GpDbQuery&  GpDbQuery::NextNULL (void)
     return *this;
 }
 
-SInt16  GpDbQuery::Int16 (const count_t aId) const
+s_int_16    GpDbQuery::Int16 (const count_t aId) const
 {
-    return std::get<SInt16>(iValues.at(aId.As<size_t>()));
+    return std::get<s_int_16>(iValues.at(aId.As<size_t>()));
 }
 
-SInt32  GpDbQuery::Int32 (const count_t aId) const
+s_int_32    GpDbQuery::Int32 (const count_t aId) const
 {
-    return std::get<SInt32>(iValues.at(aId.As<size_t>()));
+    return std::get<s_int_32>(iValues.at(aId.As<size_t>()));
 }
 
-SInt64  GpDbQuery::Int64 (const count_t aId) const
+s_int_64    GpDbQuery::Int64 (const count_t aId) const
 {
-    return std::get<SInt64>(iValues.at(aId.As<size_t>()));
+    return std::get<s_int_64>(iValues.at(aId.As<size_t>()));
 }
 
 double  GpDbQuery::Double (const count_t aId) const

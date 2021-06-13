@@ -27,9 +27,9 @@ public:
     const ValuesTypesVecT&          ValuesTypes         (void) const noexcept {return iValuesTypes;}
     const ValuesVecT&               Values              (void) const noexcept {return iValues;}
 
-    GpDbQuery&                      NextInt16           (const SInt16                       aValue);
-    GpDbQuery&                      NextInt32           (const SInt32                       aValue);
-    GpDbQuery&                      NextInt64           (const SInt64                       aValue);
+    GpDbQuery&                      NextInt16           (const s_int_16                     aValue);
+    GpDbQuery&                      NextInt32           (const s_int_32                     aValue);
+    GpDbQuery&                      NextInt64           (const s_int_64                     aValue);
     GpDbQuery&                      NextDouble          (const double                       aValue);
     GpDbQuery&                      NextFloat           (const float                        aValue);
     GpDbQuery&                      NextStrValue        (std::string_view                   aValue);
@@ -58,9 +58,9 @@ public:
     template<typename T>
     GpDbQueryValType::EnumT         NextUnpack      (T aValue);
 
-    SInt16                          Int16           (const count_t aId) const;
-    SInt32                          Int32           (const count_t aId) const;
-    SInt64                          Int64           (const count_t aId) const;
+    s_int_16                        Int16           (const count_t aId) const;
+    s_int_32                        Int32           (const count_t aId) const;
+    s_int_64                        Int64           (const count_t aId) const;
     double                          Double          (const count_t aId) const;
     float                           Float           (const count_t aId) const;
     std::string_view                StrValue        (const count_t aId) const;

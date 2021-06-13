@@ -4,7 +4,7 @@ namespace GPlatform {
 
 GpDbQueryMapperCache    GpDbQueryMapper::sMapperCache;
 
-SInt64  GpDbQueryMapper::SSelectPagingStartPoint
+s_int_64    GpDbQueryMapper::SSelectPagingStartPoint
 (
     const GpDbQueryCacheUID&    aCacheUID,
     std::string_view            aTablePath,
@@ -49,7 +49,7 @@ SInt64  GpDbQueryMapper::SSelectPagingStartPoint
 
     GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
 
-    dbQuery.NextInt64(aTimestamp.As<SInt64>());
+    dbQuery.NextInt64(aTimestamp.As<s_int_64>());
 
     GpDbQueryRes::SP    dbQueryResSP    = aDbConn.Execute(dbQuery, 0_cnt);
     const GpDbQueryRes& dbQueryRes      = dbQueryResSP.VC();
@@ -58,13 +58,13 @@ SInt64  GpDbQueryMapper::SSelectPagingStartPoint
 
     if (rowsCount == 0_cnt)
     {
-        return 0_s_int_64;
+        return 0;
     }
 
     return dbQueryRes.GetInt64(0_cnt, 0_cnt, std::nullopt);
 }
 
-SInt64  GpDbQueryMapper::SSelectPagingStartPoint
+s_int_64    GpDbQueryMapper::SSelectPagingStartPoint
 (
     const GpDbQueryCacheUID&    aCacheUID,
     std::string_view            aTablePath,
@@ -115,7 +115,7 @@ SInt64  GpDbQueryMapper::SSelectPagingStartPoint
     GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
 
     dbQuery.NextUUID(aUid);
-    dbQuery.NextInt64(aTimestamp.As<SInt64>());
+    dbQuery.NextInt64(aTimestamp.As<s_int_64>());
 
     GpDbQueryRes::SP    dbQueryResSP    = aDbConn.Execute(dbQuery, 0_cnt);
     const GpDbQueryRes& dbQueryRes      = dbQueryResSP.VC();
@@ -124,7 +124,7 @@ SInt64  GpDbQueryMapper::SSelectPagingStartPoint
 
     if (rowsCount == 0_cnt)
     {
-        return 0_s_int_64;
+        return 0;
     }
 
     return dbQueryRes.GetInt64(0_cnt, 0_cnt, std::nullopt);
@@ -165,7 +165,7 @@ void    GpDbQueryMapper::SCreatePagingOrderCounter
 
     dbQuery.NextUUID(aUid);
     dbQuery.NextStrValue(aName);
-    dbQuery.NextInt64(0_s_int_64);
+    dbQuery.NextInt64(0);
 
     aDbConn.Execute(dbQuery, 0_cnt);
 }
@@ -298,16 +298,16 @@ void    GpDbQueryMapper::SWriteRowValues
 
         switch (propInfo.Type())
         {
-            case GpType::U_INT_8:   aDbQuery.NextInt16(SInt16::SMake(propInfo.Value_UInt8(aStruct)));   break;
-            case GpType::S_INT_8:   aDbQuery.NextInt16(SInt16::SMake(propInfo.Value_SInt8(aStruct)));   break;
-            case GpType::U_INT_16:  aDbQuery.NextInt16(SInt16::SMake(propInfo.Value_UInt16(aStruct)));  break;
-            case GpType::S_INT_16:  aDbQuery.NextInt16(SInt16::SMake(propInfo.Value_SInt16(aStruct)));  break;
-            case GpType::U_INT_32:  aDbQuery.NextInt32(SInt32::SMake(propInfo.Value_UInt32(aStruct)));  break;
-            case GpType::S_INT_32:  aDbQuery.NextInt32(SInt32::SMake(propInfo.Value_SInt32(aStruct)));  break;
-            case GpType::U_INT_64:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_UInt64(aStruct)));  break;
-            case GpType::S_INT_64:  aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt64(aStruct)));  break;
-            case GpType::UNIX_TS_S: aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt64(aStruct)));  break;
-            case GpType::UNIX_TS_MS:aDbQuery.NextInt64(SInt64::SMake(propInfo.Value_SInt64(aStruct)));  break;
+            case GpType::U_INT_8:   aDbQuery.NextInt16(NumOps::SConvert<s_int_16>(propInfo.Value_UInt8(aStruct)));  break;
+            case GpType::S_INT_8:   aDbQuery.NextInt16(NumOps::SConvert<s_int_16>(propInfo.Value_SInt8(aStruct)));  break;
+            case GpType::U_INT_16:  aDbQuery.NextInt16(NumOps::SConvert<s_int_16>(propInfo.Value_UInt16(aStruct))); break;
+            case GpType::S_INT_16:  aDbQuery.NextInt16(NumOps::SConvert<s_int_16>(propInfo.Value_SInt16(aStruct))); break;
+            case GpType::U_INT_32:  aDbQuery.NextInt32(NumOps::SConvert<s_int_32>(propInfo.Value_UInt32(aStruct))); break;
+            case GpType::S_INT_32:  aDbQuery.NextInt32(NumOps::SConvert<s_int_32>(propInfo.Value_SInt32(aStruct))); break;
+            case GpType::U_INT_64:  aDbQuery.NextInt64(NumOps::SConvert<s_int_64>(propInfo.Value_UInt64(aStruct))); break;
+            case GpType::S_INT_64:  aDbQuery.NextInt64(NumOps::SConvert<s_int_64>(propInfo.Value_SInt64(aStruct))); break;
+            case GpType::UNIX_TS_S: aDbQuery.NextInt64(NumOps::SConvert<s_int_64>(propInfo.Value_SInt64(aStruct))); break;
+            case GpType::UNIX_TS_MS:aDbQuery.NextInt64(NumOps::SConvert<s_int_64>(propInfo.Value_SInt64(aStruct))); break;
             case GpType::DOUBLE:    THROW_GPE("Unsupported type DOUBLE"_sv); break;
             case GpType::FLOAT:     THROW_GPE("Unsupported type FLOAT"_sv); break;
             case GpType::BOOLEAN:   aDbQuery.NextBoolean(propInfo.Value_Bool(aStruct)); break;
@@ -332,7 +332,7 @@ void    GpDbQueryMapper::SWriteRowValues
     }
 }
 
-SInt64  GpDbQueryMapper::SRowToVersion
+s_int_64    GpDbQueryMapper::SRowToVersion
 (
     const GpDbQueryRes& aDbQueryRes,
     const count_t       aRowId,
@@ -340,7 +340,7 @@ SInt64  GpDbQueryMapper::SRowToVersion
 )
 {
     const count_t   colId   = aColOffset;
-    const SInt64    version = aDbQueryRes.GetInt64(aRowId, colId, std::nullopt);
+    const s_int_64  version = aDbQueryRes.GetInt64(aRowId, colId, std::nullopt);
 
     return version;
 }
@@ -366,16 +366,16 @@ count_t GpDbQueryMapper::SRowToStruct
 
         switch (propInfo.Type())
         {
-            case GpType::U_INT_8:   propInfo.Value_UInt8(aStruct)  = aDbQueryRes.GetInt16(aRowId, colId++, 0_s_int_16).As<u_int_8>();   break;
-            case GpType::S_INT_8:   propInfo.Value_SInt8(aStruct)  = aDbQueryRes.GetInt16(aRowId, colId++, 0_s_int_16).As<s_int_8>();   break;
-            case GpType::U_INT_16:  propInfo.Value_UInt16(aStruct) = aDbQueryRes.GetInt16(aRowId, colId++, 0_s_int_16).As<u_int_16>();  break;
-            case GpType::S_INT_16:  propInfo.Value_SInt16(aStruct) = aDbQueryRes.GetInt16(aRowId, colId++, 0_s_int_16).As<s_int_16>();  break;
-            case GpType::U_INT_32:  propInfo.Value_UInt32(aStruct) = aDbQueryRes.GetInt32(aRowId, colId++, 0_s_int_32).As<u_int_32>();  break;
-            case GpType::S_INT_32:  propInfo.Value_SInt32(aStruct) = aDbQueryRes.GetInt32(aRowId, colId++, 0_s_int_32).As<s_int_32>();  break;
-            case GpType::U_INT_64:  propInfo.Value_UInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<u_int_64>();  break;
-            case GpType::S_INT_64:  propInfo.Value_SInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_64>();  break;
-            case GpType::UNIX_TS_S: propInfo.Value_SInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_64>();  break;
-            case GpType::UNIX_TS_MS:propInfo.Value_SInt64(aStruct) = aDbQueryRes.GetInt64(aRowId, colId++, 0_s_int_64).As<s_int_64>();  break;
+            case GpType::U_INT_8:   propInfo.Value_UInt8(aStruct)  = NumOps::SConvert<u_int_8> (aDbQueryRes.GetInt16(aRowId, colId++, s_int_16(0))); break;
+            case GpType::S_INT_8:   propInfo.Value_SInt8(aStruct)  = NumOps::SConvert<s_int_8> (aDbQueryRes.GetInt16(aRowId, colId++, s_int_16(0))); break;
+            case GpType::U_INT_16:  propInfo.Value_UInt16(aStruct) = NumOps::SConvert<u_int_16>(aDbQueryRes.GetInt16(aRowId, colId++, s_int_16(0))); break;
+            case GpType::S_INT_16:  propInfo.Value_SInt16(aStruct) = NumOps::SConvert<s_int_16>(aDbQueryRes.GetInt16(aRowId, colId++, s_int_16(0))); break;
+            case GpType::U_INT_32:  propInfo.Value_UInt32(aStruct) = NumOps::SConvert<u_int_32>(aDbQueryRes.GetInt32(aRowId, colId++, s_int_32(0))); break;
+            case GpType::S_INT_32:  propInfo.Value_SInt32(aStruct) = NumOps::SConvert<s_int_32>(aDbQueryRes.GetInt32(aRowId, colId++, s_int_32(0))); break;
+            case GpType::U_INT_64:  propInfo.Value_UInt64(aStruct) = NumOps::SConvert<u_int_64>(aDbQueryRes.GetInt64(aRowId, colId++, s_int_64(0))); break;
+            case GpType::S_INT_64:  propInfo.Value_SInt64(aStruct) = NumOps::SConvert<s_int_64>(aDbQueryRes.GetInt64(aRowId, colId++, s_int_64(0))); break;
+            case GpType::UNIX_TS_S: propInfo.Value_SInt64(aStruct) = NumOps::SConvert<s_int_64>(aDbQueryRes.GetInt64(aRowId, colId++, s_int_64(0))); break;
+            case GpType::UNIX_TS_MS:propInfo.Value_SInt64(aStruct) = NumOps::SConvert<s_int_64>(aDbQueryRes.GetInt64(aRowId, colId++, s_int_64(0))); break;
             case GpType::DOUBLE:    THROW_GPE("Unsupported type DOUBLE"_sv); break;
             case GpType::FLOAT:     THROW_GPE("Unsupported type FLOAT"_sv); break;
             case GpType::BOOLEAN:   propInfo.Value_Bool(aStruct) = aDbQueryRes.GetBoolean(aRowId, colId++, false);  break;
