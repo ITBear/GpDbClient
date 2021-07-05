@@ -2,22 +2,141 @@
 #include "GpDbManager.hpp"
 #include "GpDbConnection.hpp"
 #include "GpDbManagerCatalog.hpp"
+#include "GpDbException.hpp"
+
+#include <iostream>
 
 namespace GPlatform {
 
-GpDbConnectionGuard::GpDbConnectionGuard (void):
-GpDbConnectionGuard(GpDbManagerCatalog::S().Manager("default"_sv))
+static int _GpDbConnectionGuard_counter = 0;
+
+GpDbConnectionGuard::GpDbConnectionGuard (void) noexcept
 {
+    _GpDbConnectionGuard_counter++;
+    std::cout << "[GpDbConnectionGuard::GpDbConnectionGuard]: counter = " << _GpDbConnectionGuard_counter << std::endl;
 }
 
 GpDbConnectionGuard::GpDbConnectionGuard (GpDbManager& aManager) noexcept:
 iManager(aManager)
 {
+    _GpDbConnectionGuard_counter++;
+
+    std::cout << "[GpDbConnectionGuard::GpDbConnectionGuard]: counter = " << _GpDbConnectionGuard_counter << std::endl;
 }
 
 GpDbConnectionGuard::~GpDbConnectionGuard (void) noexcept
 {
+    ConnectionRelease();
+
+    _GpDbConnectionGuard_counter--;
+
+    std::cout << "[GpDbConnectionGuard::~GpDbConnectionGuard]: counter = " << _GpDbConnectionGuard_counter << std::endl;
+}
+
+void    GpDbConnectionGuard::CommitTransaction (void)
+{
+    GpDbConnection& connection = ConnectionAcquire();
+
+    try
+    {
+        connection.CommitTransaction();
+        ConnectionRelease();
+    } catch (...)
+    {
+        ConnectionRelease();
+        throw;
+    }
+}
+
+void    GpDbConnectionGuard::RollbackTransaction (void)
+{
+    GpDbConnection& connection = ConnectionAcquire();
+
+    try
+    {
+        connection.RollbackTransaction();
+        ConnectionRelease();
+    } catch (...)
+    {
+        ConnectionRelease();
+        throw;
+    }
+}
+
+GpDbQueryRes::SP    GpDbConnectionGuard::Execute
+(
+    GpDbQuery::CSP      aQuery,
+    const count_t       aMinResultRowsCount
+)
+{
+    GpDbQueryPrepared::CSP  queryPrepared   = Manager().Prepare(aQuery);
+    GpDbConnection&         connection      = ConnectionAcquire();
+    GpDbQueryRes::SP        res;
+
+    try
+    {
+        res = connection.Execute(queryPrepared, aMinResultRowsCount);
+    } catch (...)
+    {
+        ConnectionRelease();
+        throw;
+    }
+
+    if (connection.IsTransactionOpen() == false)
+    {
+        ConnectionRelease();
+    }
+
+    return res;
+}
+
+GpDbQueryRes::SP    GpDbConnectionGuard::Execute
+(
+    std::string_view    aSQL,
+    const count_t       aMinResultRowsCount
+)
+{
+    GpDbQuery::SP query = MakeSP<GpDbQuery>(aSQL);
+    return Execute(query, aMinResultRowsCount);
+}
+
+GpDbManager&    GpDbConnectionGuard::Manager (void)
+{
+    if (iManager.has_value() == false)
+    {
+        iManager = GpDbManagerCatalog::S().Manager("default"_sv);
+    }
+
+    return iManager.value().get();
+}
+
+GpDbConnection& GpDbConnectionGuard::ConnectionAcquire (void)
+{
     if (iConnection.IsNULL())
+    {
+        auto res = Manager().Acquire();
+
+        THROW_DBE_COND
+        (
+            res.has_value(),
+            GpDbExceptionCode::CONNECTION_LIMIT_EXCEEDED,
+            "DB connection limit exceeded"_sv
+        );
+
+        iConnection = res.value();
+    }
+
+    return iConnection.Vn();
+}
+
+void    GpDbConnectionGuard::ConnectionRelease (void) noexcept
+{
+    if (iConnection.IsNULL())
+    {
+        return;
+    }
+
+    if (iManager.has_value() == false)
     {
         return;
     }
@@ -28,7 +147,7 @@ GpDbConnectionGuard::~GpDbConnectionGuard (void) noexcept
         try
         {
             conn.RollbackTransaction();
-            iManager.Release(iConnection);
+            Manager().Release(iConnection);
         } catch (const std::exception& e)
         {
             GpExceptionsSink::SSink(e);
@@ -38,22 +157,10 @@ GpDbConnectionGuard::~GpDbConnectionGuard (void) noexcept
         }
     } else
     {
-        iManager.Release(iConnection);
+        Manager().Release(iConnection);
     }
 
     iConnection.Clear();
-}
-
-GpDbConnection& GpDbConnectionGuard::Connection (void)
-{
-    if (iConnection.IsNULL())
-    {
-        auto res = iManager.Acquire();
-        THROW_GPE_COND(res.has_value(), "DB connection limit exceeded"_sv);
-        iConnection = res.value();
-    }
-
-    return iConnection.Vn();
 }
 
 }//namespace GPlatform

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GpDbClient_global.hpp"
+#include "GpDbConnectionMode.hpp"
 
 namespace GPlatform {
 
@@ -19,11 +19,15 @@ public:
     std::string_view            DriverName          (void) const noexcept {return driver_name;}
     count_t                     MaxConnPoolSize     (void) const noexcept {return max_conn_pool_size;}
     std::string_view            ConnectionStr       (void) const noexcept {return connection_str;}
+    GpDbConnectionMode::EnumT   Mode                (void) const noexcept {return mode.Value();}
+    std::string_view            EventPoller         (void) const noexcept {return event_poller;}
 
 private:
     std::string                 driver_name;
     count_t                     max_conn_pool_size;
     std::string                 connection_str;
+    GpDbConnectionMode          mode;
+    std::string                 event_poller;
 };
 
 }//namespace GPlatform

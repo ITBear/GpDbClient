@@ -26,13 +26,14 @@ public:
     static GpDbManagerCatalog&  S                       (void) noexcept;
 
     void                        Clear                   (void);
-    void                        InitFromConfig          (const GpDbManagerCfgDesc::C::MapStr::SP&   aConnections,
-                                                         const GpDbConnectionMode::EnumT            aMode);
+    void                        InitFromConfig          (const GpDbManagerCfgDesc::C::MapStr::SP& aConnections);
 
     void                        AddManager              (GpSP<GpDbManager> aManager);
     GpDbManager&                Manager                 (std::string_view aName);
 
     void                        AddDriverFactory        (GpSP<GpDbDriverFactory> aDriverFactory);
+
+private:
     GpDbDriverFactory&          DriverFactory           (std::string_view aName);
 
 private:

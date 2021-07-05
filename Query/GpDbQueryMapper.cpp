@@ -8,7 +8,7 @@ s_int_64    GpDbQueryMapper::SSelectPagingStartPoint
 (
     const GpDbQueryCacheUID&    aCacheUID,
     std::string_view            aTablePath,
-    GpDbConnection&             aDbConn,
+    GpDbConnectionGuard&        aDbConnGuard,
     std::string_view            aPagingCounterName,
     std::string_view            aTimestampName,
     const unix_ts_s_t           aTimestamp
@@ -47,11 +47,13 @@ s_int_64    GpDbQueryMapper::SSelectPagingStartPoint
         }
     );
 
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
+    {
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+        dbQuery.NextInt64(aTimestamp.As<s_int_64>());
+    }
 
-    dbQuery.NextInt64(aTimestamp.As<s_int_64>());
-
-    GpDbQueryRes::SP    dbQueryResSP    = aDbConn.Execute(dbQuery, 0_cnt);
+    GpDbQueryRes::SP    dbQueryResSP    = aDbConnGuard.Execute(dbQuerySP, 0_cnt);
     const GpDbQueryRes& dbQueryRes      = dbQueryResSP.VC();
 
     const count_t rowsCount = dbQueryRes.RowsCount();
@@ -68,7 +70,7 @@ s_int_64    GpDbQueryMapper::SSelectPagingStartPoint
 (
     const GpDbQueryCacheUID&    aCacheUID,
     std::string_view            aTablePath,
-    GpDbConnection&             aDbConn,
+    GpDbConnectionGuard&        aDbConnGuard,
     std::string_view            aPagingCounterName,
     std::string_view            aUidParamName,
     const GpUUID&               aUid,
@@ -112,12 +114,15 @@ s_int_64    GpDbQueryMapper::SSelectPagingStartPoint
         }
     );
 
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
+    {
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
 
-    dbQuery.NextUUID(aUid);
-    dbQuery.NextInt64(aTimestamp.As<s_int_64>());
+        dbQuery.NextUUID(aUid);
+        dbQuery.NextInt64(aTimestamp.As<s_int_64>());
+    }
 
-    GpDbQueryRes::SP    dbQueryResSP    = aDbConn.Execute(dbQuery, 0_cnt);
+    GpDbQueryRes::SP    dbQueryResSP    = aDbConnGuard.Execute(dbQuerySP, 0_cnt);
     const GpDbQueryRes& dbQueryRes      = dbQueryResSP.VC();
 
     const count_t rowsCount = dbQueryRes.RowsCount();
@@ -132,9 +137,9 @@ s_int_64    GpDbQueryMapper::SSelectPagingStartPoint
 
 void    GpDbQueryMapper::SCreatePagingOrderCounter
 (
-    const GpUUID&       aUid,
-    std::string_view    aName,
-    GpDbConnection&     aDbConn
+    const GpUUID&           aUid,
+    std::string_view        aName,
+    GpDbConnectionGuard&    aDbConnGuard
 )
 {
     const auto& cacheVal = sMapperCache.Get
@@ -161,13 +166,16 @@ void    GpDbQueryMapper::SCreatePagingOrderCounter
         }
     );
 
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
+    {
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
 
-    dbQuery.NextUUID(aUid);
-    dbQuery.NextStrValue(aName);
-    dbQuery.NextInt64(0);
+        dbQuery.NextUUID(aUid);
+        dbQuery.NextStrValue(aName);
+        dbQuery.NextInt64(0);
+    }
 
-    aDbConn.Execute(dbQuery, 0_cnt);
+    aDbConnGuard.Execute(dbQuerySP, 0_cnt);
 }
 
 void    GpDbQueryMapper::SInsertAsRow
@@ -175,7 +183,7 @@ void    GpDbQueryMapper::SInsertAsRow
     const GpDbQueryCacheUID&    aCacheUID,
     const GpTypeStructBase&     aStruct,
     std::string_view            aTablePath,
-    GpDbConnection&             aDbConn
+    GpDbConnectionGuard&        aDbConnGuard
 )
 {
     const auto& cacheVal = sMapperCache.Get
@@ -198,9 +206,13 @@ void    GpDbQueryMapper::SInsertAsRow
         }
     );
 
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
-    SWriteRowValues(dbQuery, aStruct);
-    aDbConn.Execute(dbQuery, 0_cnt);
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
+    {
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+        SWriteRowValues(dbQuery, aStruct);
+    }
+
+    aDbConnGuard.Execute(dbQuerySP, 0_cnt);
 }
 
 void    GpDbQueryMapper::SInsertAsRowVec
@@ -208,7 +220,7 @@ void    GpDbQueryMapper::SInsertAsRowVec
     const GpDbQueryCacheUID&            /*aCacheUID*/,
     const GpTypeStructBase::C::Vec::SP& /*aStructVec*/,
     std::string_view                    /*aTablePath*/,
-    GpDbConnection&                     /*aDbConn*/
+    GpDbConnectionGuard&                /*aDbConnGuard*/
 )
 {
     //TODO implement
@@ -251,7 +263,7 @@ void    GpDbQueryMapper::SInsertAsJsonb
     const GpDbQueryCacheUID&    aCacheUID,
     const GpTypeStructBase&     aStruct,
     std::string_view            aTablePath,
-    GpDbConnection&             aDbConn,
+    GpDbConnectionGuard&        aDbConnGuard,
     const GpJsonMapperFlags     aFlags
 )
 {
@@ -275,9 +287,13 @@ void    GpDbQueryMapper::SInsertAsJsonb
         }
     );
 
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
-    dbQuery.NextStrJson(GpJsonMapper::SToJson(aStruct, aFlags));
-    aDbConn.Execute(dbQuery, 0_cnt);
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
+    {
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+        dbQuery.NextStrJson(GpJsonMapper::SToJson(aStruct, aFlags));
+    }
+
+    aDbConnGuard.Execute(dbQuerySP, 0_cnt);
 }
 
 void    GpDbQueryMapper::SWriteRowValues
@@ -389,7 +405,7 @@ count_t GpDbQueryMapper::SRowToStruct
 
                 if (jsonStr.length() > 0)
                 {
-                    GpJsonMapper::SFromJson(jsonStr, structVal);
+                    GpJsonMapper::SFromJson(jsonStr, structVal, {});
                 }
             } break;
             case GpType::STRUCT_SP:
@@ -400,7 +416,7 @@ count_t GpDbQueryMapper::SRowToStruct
                 if (jsonStr.length() > 0)
                 {
                     const GpTypeStructInfo& structTypeInfo = GpTypeManager::S().Find(propInfo.TypeUID()).value();
-                    structVal = GpJsonMapper::SFromJson(jsonStr, structTypeInfo);
+                    structVal = GpJsonMapper::SFromJson(jsonStr, structTypeInfo, {});
                 } else
                 {
                     structVal.Clear();
@@ -428,7 +444,7 @@ void    GpDbQueryMapper::SJsonToStruct
 )
 {
     std::string_view jsonStr = aDbQueryRes.GetJsonStr(aRowId, aColOffset, std::nullopt);
-    GpJsonMapper::SFromJson(jsonStr, aStruct);
+    GpJsonMapper::SFromJson(jsonStr, aStruct, {});
 }
 
 }//namespace GPlatform

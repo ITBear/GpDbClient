@@ -15,6 +15,7 @@ include(../../QtGlobalPro.pri)
 os_windows{
 	GP_CORE_LIB_V		= 2
 	GP_JSON_LIB_V		= 0
+	GP_NETWORK_LIB_V	= 0
 }
 
 os_linux{
@@ -22,6 +23,7 @@ os_linux{
 
 LIBS += -lGpCore2$$TARGET_POSTFIX$$GP_CORE_LIB_V
 LIBS += -lGpJson$$TARGET_POSTFIX$$GP_JSON_LIB_V
+LIBS += -lGpNetwork$$TARGET_POSTFIX$$GP_NETWORK_LIB_V
 #------------------------------ LIBS END ---------------------------------
 
 HEADERS += \
@@ -43,6 +45,7 @@ HEADERS += \
 	Query/GpDbQueryBuilder.hpp \
 	Query/GpDbQueryMapper.hpp \
 	Query/GpDbQueryMapperCache.hpp \
+	Query/GpDbQueryPrepared.hpp \
 	Query/GpDbQueryRes.hpp \
 	Query/GpDbQueryResState.hpp \
 	Query/GpDbQueryValStrJson.hpp \
@@ -68,6 +71,7 @@ SOURCES += \
 	Query/GpDbQueryBuilder.cpp \
 	Query/GpDbQueryMapper.cpp \
 	Query/GpDbQueryMapperCache.cpp \
+	Query/GpDbQueryPrepared.cpp \
 	Query/GpDbQueryRes.cpp \
 	Query/GpDbQueryResState.cpp \
 	Query/GpDbQueryValType.cpp

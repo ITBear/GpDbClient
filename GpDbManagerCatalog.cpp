@@ -2,15 +2,24 @@
 #include "GpDbManager.hpp"
 #include "GpDbDriverFactory.hpp"
 
+#include <iostream>
+
 namespace GPlatform {
+
+static int _GpDbManagerCatalog_counter = 0;
 
 GpDbManagerCatalog::GpDbManagerCatalog (void) noexcept
 {
+    _GpDbManagerCatalog_counter++;
+    std::cout << "[GpDbManagerCatalog::GpDbManagerCatalog]: counter = " << _GpDbManagerCatalog_counter << std::endl;
 }
 
 GpDbManagerCatalog::~GpDbManagerCatalog (void) noexcept
 {
     iManagers.Clear();
+
+    _GpDbManagerCatalog_counter--;
+    std::cout << "[GpDbManagerCatalog::~GpDbManagerCatalog]: counter = " << _GpDbManagerCatalog_counter << std::endl;
 }
 
 GpDbManagerCatalog& GpDbManagerCatalog::S (void) noexcept
@@ -19,22 +28,19 @@ GpDbManagerCatalog& GpDbManagerCatalog::S (void) noexcept
     return sDbGlobal;
 }
 
-void    GpDbManagerCatalog::InitFromConfig
-(
-    const GpDbManagerCfgDesc::C::MapStr::SP&    aConnections,
-    const GpDbConnectionMode::EnumT             aMode
-)
+void    GpDbManagerCatalog::InitFromConfig (const GpDbManagerCfgDesc::C::MapStr::SP& aConnections)
 {
     for (const auto& iter: aConnections)
     {
-        std::string_view            name        = iter.first;
-        const GpDbManagerCfgDesc&   cfg         = iter.second.VC();
-        GpDbManager::SP             dbManager   = MakeSP<GpDbManager>
+        std::string_view            name    = iter.first;
+        const GpDbManagerCfgDesc&   cfg     = iter.second.VC();
+
+        GpDbManager::SP dbManager = MakeSP<GpDbManager>
         (
             name,
-            DriverFactory(cfg.DriverName()).NewInstance(),
+            DriverFactory(cfg.DriverName()).NewInstance(cfg.Mode(), GpIOEventPollerCatalog::S().Find(cfg.EventPoller())),
             cfg.ConnectionStr(),
-            aMode
+            cfg.Mode()
         );
 
         dbManager->Init(0_cnt, cfg.MaxConnPoolSize());
@@ -46,6 +52,7 @@ void    GpDbManagerCatalog::InitFromConfig
 void    GpDbManagerCatalog::Clear (void)
 {
     iManagers.Clear();
+    iDrivers.Clear();
 }
 
 void    GpDbManagerCatalog::AddManager (GpDbManager::SP aManager)

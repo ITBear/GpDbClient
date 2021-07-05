@@ -3,11 +3,11 @@
 #include "GpDbQueryMapperCache.hpp"
 #include "GpDbQueryBuilder.hpp"
 #include "../GpDbConnection.hpp"
+#include "../GpDbConnectionGuard.hpp"
 #include "../GpDbException.hpp"
 
 namespace GPlatform {
 
-class GpDbConnection;
 class GpDbQueryRes;
 
 class GPDBCLIENT_API GpDbQueryMapper
@@ -30,14 +30,14 @@ public:
 
     static s_int_64             SSelectPagingStartPoint     (const GpDbQueryCacheUID&   aCacheUID,
                                                              std::string_view           aTablePath,
-                                                             GpDbConnection&            aDbConn,
+                                                             GpDbConnectionGuard&       aDbConnGuard,
                                                              std::string_view           aPagingCounterName,
                                                              std::string_view           aTimestampName,
                                                              const unix_ts_s_t          aTimestamp);
 
     static s_int_64             SSelectPagingStartPoint     (const GpDbQueryCacheUID&   aCacheUID,
                                                              std::string_view           aTablePath,
-                                                             GpDbConnection&            aDbConn,
+                                                             GpDbConnectionGuard&       aDbConnGuard,
                                                              std::string_view           aPagingCounterName,
                                                              std::string_view           aUidParamName,
                                                              const GpUUID&              aUid,
@@ -45,15 +45,15 @@ public:
                                                              const unix_ts_s_t          aTimestamp);
 
 
-    static void                 SCreatePagingOrderCounter   (const GpUUID&      aUid,
-                                                             std::string_view   aName,
-                                                             GpDbConnection&    aDbConn);
+    static void                 SCreatePagingOrderCounter   (const GpUUID&          aUid,
+                                                             std::string_view       aName,
+                                                             GpDbConnectionGuard&   aDbConnGuard);
 
     template<typename... KeysT> static
     void                        SSetPagingOrder             (const GpDbQueryCacheUID&                           aCacheUID,
                                                              const s_int_64                                     aVersion,
                                                              std::string_view                                   aTablePath,
-                                                             GpDbConnection&                                    aDbConn,
+                                                             GpDbConnectionGuard&                               aDbConnGuard,
                                                              const PagingCounterIDS&                            aPagingCounterIDS,
                                                              const GpArray<std::string_view, sizeof...(KeysT)>& aKeysNames,
                                                              KeysT...                                           aKeysValues);
@@ -63,7 +63,7 @@ public:
     void                        SSetPagingOrderRow          (const GpDbQueryCacheUID&                           aCacheUID,
                                                              const s_int_64                                     aVersion,
                                                              std::string_view                                   aTablePath,
-                                                             GpDbConnection&                                    aDbConn,
+                                                             GpDbConnectionGuard&                               aDbConnGuard,
                                                              const GpTypeStructBase&                            aStruct,
                                                              const PagingCounterIDS&                            aPagingCounterIDS,
                                                              const GpArray<std::string_view, sizeof...(KeysT)>& aKeysNames,
@@ -72,18 +72,18 @@ public:
     static void                 SInsertAsRow                (const GpDbQueryCacheUID&   aCacheUID,
                                                              const GpTypeStructBase&    aStruct,
                                                              std::string_view           aTablePath,
-                                                             GpDbConnection&            aDbConn);
+                                                             GpDbConnectionGuard&       aDbConnGuard);
 
     static void                 SInsertAsRowVec             (const GpDbQueryCacheUID&               aCacheUID,
                                                              const GpTypeStructBase::C::Vec::SP&    aStructVec,
                                                              std::string_view                       aTablePath,
-                                                             GpDbConnection&                        aDbConn);
+                                                             GpDbConnectionGuard&                   aDbConnGuard);
 
     template<typename... KeysT> static
     s_int_64/*version*/         SSelectByKeysAsRow          (const GpDbQueryCacheUID&                           aCacheUID,
                                                              GpTypeStructBase&                                  aStruct,
                                                              std::string_view                                   aTablePath,
-                                                             GpDbConnection&                                    aDbConn,
+                                                             GpDbConnectionGuard&                               aDbConnGuard,
                                                              const GpArray<std::string_view, sizeof...(KeysT)>& aKeysNames,
                                                              KeysT...                                           aKeysValues);
 
@@ -91,7 +91,7 @@ public:
     std::tuple<typename T::SP, s_int_64/*version*/>
                                 SSelectByKeysAsRow          (const GpDbQueryCacheUID&                           aCacheUID,
                                                              std::string_view                                   aTablePath,
-                                                             GpDbConnection&                                    aDbConn,
+                                                             GpDbConnectionGuard&                               aDbConnGuard,
                                                              const GpArray<std::string_view, sizeof...(KeysT)>& aKeysNames,
                                                              KeysT...                                           aKeysValues);
 
@@ -100,7 +100,7 @@ public:
                                                              const GpTypeStructBase&                            aStruct,
                                                              const s_int_64                                     aVersion,
                                                              std::string_view                                   aTablePath,
-                                                             GpDbConnection&                                    aDbConn,
+                                                             GpDbConnectionGuard&                               aDbConnGuard,
                                                              const GpArray<std::string_view, sizeof...(KeysT)>& aKeysNames,
                                                              KeysT...                                           aKeysValues);
 
@@ -110,7 +110,7 @@ public:
     void                        SSetPagingOrderJsonb        (const GpDbQueryCacheUID&                           aCacheUID,
                                                              const s_int_64                                     aVersion,
                                                              std::string_view                                   aTablePath,
-                                                             GpDbConnection&                                    aDbConn,
+                                                             GpDbConnectionGuard&                               aDbConnGuard,
                                                              const GpTypeStructBase&                            aStruct,
                                                              const GpJsonMapperFlags                            aFlags,
                                                              const PagingCounterIDS&                            aPagingCounterIDS,
@@ -120,14 +120,14 @@ public:
     static void                 SInsertAsJsonb              (const GpDbQueryCacheUID&   aCacheUID,
                                                              const GpTypeStructBase&    aStruct,
                                                              std::string_view           aTablePath,
-                                                             GpDbConnection&            aDbConn,
+                                                             GpDbConnectionGuard&       aDbConnGuard,
                                                              const GpJsonMapperFlags    aFlags);
 
     template<typename... KeysT> static
     s_int_64/*version*/         SSelectByKeysAsJsonb        (const GpDbQueryCacheUID&                           aCacheUID,
                                                              GpTypeStructBase&                                  aStruct,
                                                              std::string_view                                   aTablePath,
-                                                             GpDbConnection&                                    aDbConn,
+                                                             GpDbConnectionGuard&                               aDbConnGuard,
                                                              const GpArray<std::string_view, sizeof...(KeysT)>& aKeysNames,
                                                              KeysT...                                           aKeysValues);
 
@@ -135,7 +135,7 @@ public:
     std::tuple<typename T::SP, s_int_64/*version*/>
                                 SSelectByKeysAsJsonb        (const GpDbQueryCacheUID&                           aCacheUID,
                                                              std::string_view                                   aTablePath,
-                                                             GpDbConnection&                                    aDbConn,
+                                                             GpDbConnectionGuard&                               aDbConnGuard,
                                                              const GpArray<std::string_view, sizeof...(KeysT)>& aKeysNames,
                                                              KeysT...                                           aKeysValues);
 
@@ -144,7 +144,7 @@ public:
                                                              const GpTypeStructBase&                            aStruct,
                                                              const s_int_64                                     aVersion,
                                                              std::string_view                                   aTablePath,
-                                                             GpDbConnection&                                    aDbConn,
+                                                             GpDbConnectionGuard&                               aDbConnGuard,
                                                              const GpJsonMapperFlags                            aFlags,
                                                              const GpArray<std::string_view, sizeof...(KeysT)>& aKeysNames,
                                                              KeysT...                                           aKeysValues);
@@ -190,7 +190,7 @@ void    GpDbQueryMapper::SSetPagingOrder
     const GpDbQueryCacheUID&                            aCacheUID,
     const s_int_64                                      aVersion,
     std::string_view                                    aTablePath,
-    GpDbConnection&                                     aDbConn,
+    GpDbConnectionGuard&                                aDbConnGuard,
     const PagingCounterIDS&                             aPagingCounterIDS,
     const GpArray<std::string_view, sizeof...(KeysT)>&  aKeysNames,
     KeysT...                                            aKeysValues
@@ -257,21 +257,24 @@ void    GpDbQueryMapper::SSetPagingOrder
         }
     );
 
-    //Do query
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
-
-    for (auto[uidParam, counterName]: aPagingCounterIDS)
+    //Prepare query
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
     {
-        if (std::holds_alternative<GpUUID>(uidParam))
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+
+        for (auto[uidParam, counterName]: aPagingCounterIDS)
         {
-            dbQuery.NextUUID(std::get<GpUUID>(uidParam));
+            if (std::holds_alternative<GpUUID>(uidParam))
+            {
+                dbQuery.NextUUID(std::get<GpUUID>(uidParam));
+            }
         }
+
+        dbQuery.Nexts<KeysT...>(aKeysValues...);
+        dbQuery.NextInt64(aVersion);
     }
 
-    dbQuery.Nexts<KeysT...>(aKeysValues...);
-    dbQuery.NextInt64(aVersion);
-
-    aDbConn.Execute(dbQuery, 1_cnt);
+    aDbConnGuard.Execute(dbQuerySP, 1_cnt);
 }
 
 template<typename... KeysT>
@@ -280,7 +283,7 @@ void    GpDbQueryMapper::SSetPagingOrderRow
     const GpDbQueryCacheUID&                            aCacheUID,
     const s_int_64                                      aVersion,
     std::string_view                                    aTablePath,
-    GpDbConnection&                                     aDbConn,
+    GpDbConnectionGuard&                                aDbConnGuard,
     const GpTypeStructBase&                             aStruct,
     const PagingCounterIDS&                             aPagingCounterIDS,
     const GpArray<std::string_view, sizeof...(KeysT)>&  aKeysNames,
@@ -352,22 +355,25 @@ void    GpDbQueryMapper::SSetPagingOrderRow
     );
 
     //Do query
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
-
-    GpDbQueryMapper::SWriteRowValues(dbQuery, aStruct);
-
-    for (auto[uidParam, counterName]: aPagingCounterIDS)
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
     {
-        if (std::holds_alternative<GpUUID>(uidParam))
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+
+        GpDbQueryMapper::SWriteRowValues(dbQuery, aStruct);
+
+        for (auto[uidParam, counterName]: aPagingCounterIDS)
         {
-            dbQuery.NextUUID(std::get<GpUUID>(uidParam));
+            if (std::holds_alternative<GpUUID>(uidParam))
+            {
+                dbQuery.NextUUID(std::get<GpUUID>(uidParam));
+            }
         }
+
+        dbQuery.Nexts<KeysT...>(aKeysValues...);
+        dbQuery.NextInt64(aVersion);
     }
 
-    dbQuery.Nexts<KeysT...>(aKeysValues...);
-    dbQuery.NextInt64(aVersion);
-
-    aDbConn.Execute(dbQuery, 1_cnt);
+    aDbConnGuard.Execute(dbQuerySP, 1_cnt);
 }
 
 template<typename... KeysT>
@@ -376,7 +382,7 @@ s_int_64    GpDbQueryMapper::SSelectByKeysAsRow
     const GpDbQueryCacheUID&                            aCacheUID,
     GpTypeStructBase&                                   aStruct,
     std::string_view                                    aTablePath,
-    GpDbConnection&                                     aDbConn,
+    GpDbConnectionGuard&                                aDbConnGuard,
     const GpArray<std::string_view, sizeof...(KeysT)>&  aKeysNames,
     KeysT...                                            aKeysValues
 )
@@ -408,9 +414,12 @@ s_int_64    GpDbQueryMapper::SSelectByKeysAsRow
     );
 
     //Do query
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
-    dbQuery.Nexts<KeysT...>(aKeysValues...);
-    GpDbQueryRes::SP dbQueryRes = aDbConn.Execute(dbQuery, 1_cnt);
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
+    {
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+        dbQuery.Nexts<KeysT...>(aKeysValues...);
+    }
+    GpDbQueryRes::SP dbQueryRes = aDbConnGuard.Execute(dbQuerySP, 1_cnt);
 
     //Read
     const s_int_64 version = SRowToVersion(dbQueryRes.VCn(), 0_cnt, 0_cnt);
@@ -425,13 +434,13 @@ GpDbQueryMapper::SSelectByKeysAsRow
 (
     const GpDbQueryCacheUID&                            aCacheUID,
     std::string_view                                    aTablePath,
-    GpDbConnection&                                     aDbConn,
+    GpDbConnectionGuard&                                aDbConnGuard,
     const GpArray<std::string_view, sizeof...(KeysT)>&  aKeysNames,
     KeysT...                                            aKeysValues
 )
 {
     typename T::SP res = MakeSP<T>();
-    const s_int_64 version = SSelectByKeysAsRow<KeysT...>(aCacheUID, res.Vn(), aTablePath, aDbConn, aKeysNames, aKeysValues...);
+    const s_int_64 version = SSelectByKeysAsRow<KeysT...>(aCacheUID, res.Vn(), aTablePath, aDbConnGuard, aKeysNames, aKeysValues...);
     return {res, version};
 }
 
@@ -442,7 +451,7 @@ void    GpDbQueryMapper::SUpdateByKeysAsRow
     const GpTypeStructBase&                             aStruct,
     const s_int_64                                      aVersion,
     std::string_view                                    aTablePath,
-    GpDbConnection&                                     aDbConn,
+    GpDbConnectionGuard&                                aDbConnGuard,
     const GpArray<std::string_view, sizeof...(KeysT)>&  aKeysNames,
     KeysT...                                            aKeysValues)
 {
@@ -474,11 +483,14 @@ void    GpDbQueryMapper::SUpdateByKeysAsRow
         }
     );
 
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
-    SWriteRowValues(dbQuery, aStruct);
-    dbQuery.Nexts<KeysT...>(std::forward<KeysT...>(aKeysValues...));
-    dbQuery.NextInt64(aVersion);
-    aDbConn.Execute(dbQuery, 1_cnt);
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
+    {
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+        SWriteRowValues(dbQuery, aStruct);
+        dbQuery.Nexts<KeysT...>(std::forward<KeysT...>(aKeysValues...));
+        dbQuery.NextInt64(aVersion);
+    }
+    aDbConnGuard.Execute(dbQuerySP, 1_cnt);
 }
 
 template<typename... KeysT>
@@ -487,7 +499,7 @@ void    GpDbQueryMapper::SSetPagingOrderJsonb
     const GpDbQueryCacheUID&                            aCacheUID,
     const s_int_64                                      aVersion,
     std::string_view                                    aTablePath,
-    GpDbConnection&                                     aDbConn,
+    GpDbConnectionGuard&                                aDbConnGuard,
     const GpTypeStructBase&                             aStruct,
     const GpJsonMapperFlags                             aFlags,
     const PagingCounterIDS&                             aPagingCounterIDS,
@@ -560,22 +572,24 @@ void    GpDbQueryMapper::SSetPagingOrderJsonb
     );
 
     //Do query
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
-
-    dbQuery.NextStrJson(GpJsonMapper::SToJson(aStruct, aFlags));
-
-    for (auto[uidParam, counterName]: aPagingCounterIDS)
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
     {
-        if (std::holds_alternative<GpUUID>(uidParam))
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+        dbQuery.NextStrJson(GpJsonMapper::SToJson(aStruct, aFlags));
+
+        for (auto[uidParam, counterName]: aPagingCounterIDS)
         {
-            dbQuery.NextUUID(std::get<GpUUID>(uidParam));
+            if (std::holds_alternative<GpUUID>(uidParam))
+            {
+                dbQuery.NextUUID(std::get<GpUUID>(uidParam));
+            }
         }
+
+        dbQuery.Nexts<KeysT...>(aKeysValues...);
+        dbQuery.NextInt64(aVersion);
     }
 
-    dbQuery.Nexts<KeysT...>(aKeysValues...);
-    dbQuery.NextInt64(aVersion);
-
-    aDbConn.Execute(dbQuery, 1_cnt);
+    aDbConnGuard.Execute(dbQuerySP, 1_cnt);
 }
 
 template<typename... KeysT>
@@ -584,7 +598,7 @@ s_int_64    GpDbQueryMapper::SSelectByKeysAsJsonb
     const GpDbQueryCacheUID&                            aCacheUID,
     GpTypeStructBase&                                   aStruct,
     std::string_view                                    aTablePath,
-    GpDbConnection&                                     aDbConn,
+    GpDbConnectionGuard&                                aDbConnGuard,
     const GpArray<std::string_view, sizeof...(KeysT)>&  aKeysNames,
     KeysT...                                            aKeysValues
 )
@@ -616,9 +630,13 @@ s_int_64    GpDbQueryMapper::SSelectByKeysAsJsonb
     );
 
     //Do query
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
-    dbQuery.Nexts<KeysT...>(std::forward<KeysT...>(aKeysValues...));
-    GpDbQueryRes::SP dbQueryRes = aDbConn.Execute(dbQuery, 1_cnt);
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
+    {
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+        dbQuery.Nexts<KeysT...>(std::forward<KeysT...>(aKeysValues...));
+    }
+
+    GpDbQueryRes::SP dbQueryRes = aDbConnGuard.Execute(dbQuerySP, 1_cnt);
 
     //Read
     const s_int_64 version = SRowToVersion(dbQueryRes.VCn(), 0_cnt, 0_cnt);
@@ -633,18 +651,22 @@ GpDbQueryMapper::SSelectByKeysAsJsonb
 (
     const GpDbQueryCacheUID&                            aCacheUID,
     std::string_view                                    aTablePath,
-    GpDbConnection&                                     aDbConn,
+    GpDbConnectionGuard&                                aDbConnGuard,
     const GpArray<std::string_view, sizeof...(KeysT)>&  aKeysNames,
     KeysT...                                            aKeysValues
 )
 {
     typename T::SP res = MakeSP<T>();
-    const s_int_64 version = SSelectByKeysAsJsonb<KeysT...>(aCacheUID,
-                                                            res.Vn(),
-                                                            aTablePath,
-                                                            aDbConn,
-                                                            aKeysNames,
-                                                            std::forward<KeysT...>(aKeysValues...));
+    const s_int_64 version = SSelectByKeysAsJsonb<KeysT...>
+    (
+        aCacheUID,
+        res.Vn(),
+        aTablePath,
+        aDbConnGuard,
+        aKeysNames,
+        std::forward<KeysT...>(aKeysValues...)
+    );
+
     return {res, version};
 }
 
@@ -655,7 +677,7 @@ void    GpDbQueryMapper::SUpdateByKeysAsJsonb
     const GpTypeStructBase&                             aStruct,
     const s_int_64                                      aVersion,
     std::string_view                                    aTablePath,
-    GpDbConnection&                                     aDbConn,
+    GpDbConnectionGuard&                                aDbConnGuard,
     const GpJsonMapperFlags                             aFlags,
     const GpArray<std::string_view, sizeof...(KeysT)>&  aKeysNames,
     KeysT...                                            aKeysValues
@@ -689,11 +711,16 @@ void    GpDbQueryMapper::SUpdateByKeysAsJsonb
         }
     );
 
-    GpDbQuery dbQuery(cacheVal.iQuery, cacheVal.iValuesTypes);
-    dbQuery.NextStrJson(GpJsonMapper::SToJson(aStruct, aFlags));
-    dbQuery.Nexts<KeysT...>(aKeysValues...);
-    dbQuery.NextInt64(aVersion);
-    aDbConn.Execute(dbQuery, 1_cnt);
+    GpDbQuery::SP dbQuerySP = MakeSP<GpDbQuery>(cacheVal.iQuery, cacheVal.iValuesTypes);
+    {
+        GpDbQuery& dbQuery = dbQuerySP.Vn();
+
+        dbQuery.NextStrJson(GpJsonMapper::SToJson(aStruct, aFlags));
+        dbQuery.Nexts<KeysT...>(aKeysValues...);
+        dbQuery.NextInt64(aVersion);
+    }
+
+    aDbConnGuard.Execute(dbQuerySP, 1_cnt);
 }
 
 void    GpDbQueryMapper::SRethrowOnNoResult
@@ -707,7 +734,7 @@ void    GpDbQueryMapper::SRethrowOnNoResult
         aSqlFn();
     } catch (const GpDbException& e)
     {
-        if (e.Code() == GpDbExceptionCode::EMPTY_QUERY_RES)
+        if (e.Code() == GpDbExceptionCode::QUERY_RESULT_COUNT_LOW)
         {
             aThrowFn();
         } else
@@ -729,7 +756,7 @@ T   GpDbQueryMapper::SRethrowOnNoResult
         return aSqlFn();
     } catch (const GpDbException& e)
     {
-        if (e.Code() == GpDbExceptionCode::EMPTY_QUERY_RES)
+        if (e.Code() == GpDbExceptionCode::QUERY_ERROR)
         {
             aThrowFn();
         }
@@ -775,7 +802,7 @@ T   GpDbQueryMapper::SReadQueryResOne
     THROW_DBE_COND
     (
         rowsCount > 0_cnt,
-        GpDbExceptionCode::EMPTY_QUERY_RES,
+        GpDbExceptionCode::QUERY_RESULT_COUNT_LOW,
         ""_sv
     );
 

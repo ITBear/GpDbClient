@@ -5,7 +5,10 @@
 namespace GPlatform {
 
 GP_ENUM(GPDBCLIENT_API, GpDbExceptionCode,
-    EMPTY_QUERY_RES
+    CONNECTION_ERROR,
+    CONNECTION_LIMIT_EXCEEDED,
+    QUERY_ERROR,
+    QUERY_RESULT_COUNT_LOW
 );
 
 }//namespace GPlatform

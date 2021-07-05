@@ -12,3 +12,4 @@
 #include "GpDbException.hpp"
 #include "Query/GpDbQueryMapper.hpp"
 #include "Query/GpDbQueryBuilder.hpp"
+#include "Query/GpDbQueryPrepared.hpp"

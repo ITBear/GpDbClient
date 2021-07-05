@@ -33,12 +33,12 @@ public:
                                                      std::optional<s_int_16>    aOnNullValue) const = 0;
 
     [[nodiscard]]
-    virtual s_int_32                    GetInt32    (const count_t              aRowId,
+    virtual s_int_32                GetInt32        (const count_t              aRowId,
                                                      const count_t              aColId,
                                                      std::optional<s_int_32>    aOnNullValue) const = 0;
 
     [[nodiscard]]
-    virtual s_int_64                    GetInt64    (const count_t              aRowId,
+    virtual s_int_64                GetInt64        (const count_t              aRowId,
                                                      const count_t              aColId,
                                                      std::optional<s_int_64>    aOnNullValue) const = 0;
 
