@@ -11,7 +11,7 @@ class GpDbDriverFactory;
 class GPDBCLIENT_API GpDbManagerCatalog
 {
 public:
-    CLASS_REMOVE_CTRS_EXCEPT_DEFAULT(GpDbManagerCatalog)
+    CLASS_REMOVE_CTRS_MOVE_COPY(GpDbManagerCatalog)
     CLASS_DECLARE_DEFAULTS(GpDbManagerCatalog)
     CLASS_TAG(THREAD_SAFE)
 

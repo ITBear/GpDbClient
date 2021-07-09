@@ -7,7 +7,7 @@ namespace GPlatform {
 class GPDBCLIENT_API GpDbQueryRes
 {
 public:
-    CLASS_REMOVE_CTRS_EXCEPT_DEFAULT(GpDbQueryRes)
+    CLASS_REMOVE_CTRS_MOVE_COPY(GpDbQueryRes)
     CLASS_DECLARE_DEFAULTS(GpDbQueryRes)
 
     using StateTE = GpDbQueryResState::EnumT;

@@ -13,7 +13,7 @@ class GpDbQueryRes;
 class GPDBCLIENT_API GpDbQueryMapper
 {
 public:
-    CLASS_REMOVE_CTRS(GpDbQueryMapper)
+    CLASS_REMOVE_CTRS_DEFAULT_MOVE_COPY(GpDbQueryMapper)
 
     using PagingCounterID   = std::tuple<std::variant<std::string_view, GpUUID>/*uid param name/value*/,
                                          std::string_view/*name*/>;

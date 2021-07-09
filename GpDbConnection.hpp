@@ -12,7 +12,7 @@ namespace GPlatform {
 class GPDBCLIENT_API GpDbConnection
 {
 public:
-    CLASS_REMOVE_CTRS(GpDbConnection)
+    CLASS_REMOVE_CTRS_DEFAULT_MOVE_COPY(GpDbConnection)
     CLASS_DECLARE_DEFAULTS(GpDbConnection)
 
     using StatusTE              = GpDbConnectionStatus::EnumT;

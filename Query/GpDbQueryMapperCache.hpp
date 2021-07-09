@@ -33,7 +33,7 @@ using GpDbQueryCacheUID = GpTypeShell<GpUUID, GpDbQueryCacheUID_Shell>;
 class GPDBCLIENT_API GpDbQueryMapperCache
 {
 public:
-    CLASS_REMOVE_CTRS_EXCEPT_DEFAULT(GpDbQueryMapperCache)
+    CLASS_REMOVE_CTRS_MOVE_COPY(GpDbQueryMapperCache)
     CLASS_DECLARE_DEFAULTS(GpDbQueryMapperCache)
 
 public:

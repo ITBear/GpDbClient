@@ -6,7 +6,7 @@ namespace GPlatform {
 
 class GPDBCLIENT_API GpDbQueryBuilder
 {
-    CLASS_REMOVE_CTRS_EXCEPT_DEFAULT(GpDbQueryBuilder)
+    CLASS_REMOVE_CTRS_MOVE_COPY(GpDbQueryBuilder)
     CLASS_DECLARE_DEFAULTS(GpDbQueryBuilder)
 
     using ValuesTypesVecT = GpVector<GpDbQueryValType::EnumT>;

@@ -9,7 +9,7 @@ namespace GPlatform {
 class GPDBCLIENT_API GpDbQuery
 {
 public:
-    CLASS_REMOVE_CTRS(GpDbQuery)
+    CLASS_REMOVE_CTRS_DEFAULT_MOVE_COPY(GpDbQuery)
     CLASS_DECLARE_DEFAULTS(GpDbQuery)
 
     using ValuesTypesVecT   = GpVector<GpDbQueryValType::EnumT>;

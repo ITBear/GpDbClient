@@ -9,7 +9,7 @@ class GpDbDriver;
 class GPDBCLIENT_API GpDbDriverFactory
 {
 public:
-    CLASS_REMOVE_CTRS(GpDbDriverFactory)
+    CLASS_REMOVE_CTRS_DEFAULT_MOVE_COPY(GpDbDriverFactory)
     CLASS_DECLARE_DEFAULTS(GpDbDriverFactory)
 
 protected:

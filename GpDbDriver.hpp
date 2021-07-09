@@ -10,7 +10,7 @@ class GpDbConnection;
 class GPDBCLIENT_API GpDbDriver
 {
 public:
-    CLASS_REMOVE_CTRS(GpDbDriver)
+    CLASS_REMOVE_CTRS_DEFAULT_MOVE_COPY(GpDbDriver)
     CLASS_DECLARE_DEFAULTS(GpDbDriver)
     CLASS_TAG(THREAD_SAFE)
 

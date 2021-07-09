@@ -9,7 +9,7 @@ class GpDbManager;
 class GPDBCLIENT_API GpDbConnectionGuard
 {
 public:
-    CLASS_REMOVE_CTRS_EXCEPT_DEFAULT(GpDbConnectionGuard)
+    CLASS_REMOVE_CTRS_MOVE_COPY(GpDbConnectionGuard)
     CLASS_DECLARE_DEFAULTS(GpDbConnectionGuard)
 
     using ManagerRefT = std::optional<std::reference_wrapper<GpDbManager>>;

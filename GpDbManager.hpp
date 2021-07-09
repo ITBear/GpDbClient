@@ -13,7 +13,7 @@ class GpDbManagerCfgDesc;
 class GPDBCLIENT_API GpDbManager final: public GpElementsPool<GpSP<GpDbConnection>>
 {
 public:
-    CLASS_REMOVE_CTRS(GpDbManager)
+    CLASS_REMOVE_CTRS_DEFAULT_MOVE_COPY(GpDbManager)
     CLASS_DECLARE_DEFAULTS(GpDbManager)
     CLASS_TAG(THREAD_SAFE)
 

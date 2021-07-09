@@ -7,7 +7,7 @@ namespace GPlatform {
 class GPDBCLIENT_API GpDbQueryPrepared
 {
 public:
-    CLASS_REMOVE_CTRS(GpDbQueryPrepared)
+    CLASS_REMOVE_CTRS_DEFAULT_MOVE_COPY(GpDbQueryPrepared)
     CLASS_DECLARE_DEFAULTS(GpDbQueryPrepared)
 
 protected:
