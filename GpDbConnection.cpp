@@ -1,10 +1,6 @@
 #include "GpDbConnection.hpp"
 
-#include <iostream>
-
 namespace GPlatform {
-
-static int _GpDbConnection_count = 0;
 
 GpDbConnection::GpDbConnection
 (
@@ -15,14 +11,10 @@ iStatus(aStatus),
 iMode(aMode),
 iEventPoller(std::move(aEventPoller))
 {
-    _GpDbConnection_count++;
-    std::cout << "[GpDbConnection::GpDbConnection]: count = " << _GpDbConnection_count << std::endl;
 }
 
 GpDbConnection::~GpDbConnection (void) noexcept
 {
-    _GpDbConnection_count--;
-    std::cout << "[GpDbConnection::~GpDbConnection]: count = " << _GpDbConnection_count << std::endl;
 }
 
 void    GpDbConnection::BeginTransaction (GpDbTransactionIsolation::EnumT aIsolationLevel)

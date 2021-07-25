@@ -98,6 +98,17 @@ GpDbQueryBuilder&   GpDbQueryBuilder::OR (void)
     return *this;
 }
 
+GpDbQueryBuilder&   GpDbQueryBuilder::NOT (void)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("NOT"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
 GpDbQueryBuilder&   GpDbQueryBuilder::BITWISE_AND (void)
 {
     CheckForSpace();
@@ -677,12 +688,12 @@ GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const SInt64 aValue)
     return *this;
 }
 
-GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const bool aValue)
+GpDbQueryBuilder&   GpDbQueryBuilder::VALUE (const GpBool aValue)
 {
     CheckForSpace();
 
     iQueryStr
-        .append(aValue ? "true"_sv : "false"_sv)
+        .append(aValue.Value() ? "true"_sv : "false"_sv)
         .append(" "_sv);
 
     return *this;

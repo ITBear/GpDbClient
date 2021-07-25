@@ -7,8 +7,6 @@
 
 namespace GPlatform {
 
-static int _GpDbManager_counter = 0;
-
 GpDbManager::GpDbManager
 (
     std::string_view                aName,
@@ -21,14 +19,10 @@ iDriver(std::move(aDriver)),
 iConnStr(aConnectionStr),
 iMode(aMode)
 {
-    _GpDbManager_counter++;
-    std::cout << "[GpDbManager::GpDbManager]: counter = " << _GpDbManager_counter << std::endl;
 }
 
 GpDbManager::~GpDbManager (void) noexcept
 {
-    _GpDbManager_counter--;
-    std::cout << "[GpDbManager::~GpDbManager]: counter = " << _GpDbManager_counter << std::endl;
 }
 
 GpDbQueryPrepared::CSP  GpDbManager::Prepare (GpDbQuery::CSP aQuery) const

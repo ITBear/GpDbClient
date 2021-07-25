@@ -4,13 +4,9 @@
 
 namespace GPlatform {
 
-static int _GpDbQuery_counter = 0;
-
 GpDbQuery::GpDbQuery (std::string_view aQueryStr):
 iQueryStr(aQueryStr)
 {
-    _GpDbQuery_counter++;
-    std::cout << "[GpDbQuery::GpDbQuery]: counter = " << _GpDbQuery_counter << std::endl;
 }
 
 GpDbQuery::GpDbQuery
@@ -21,8 +17,6 @@ GpDbQuery::GpDbQuery
 iQueryStr(aQueryStr),
 iValuesTypes(aValuesTypes)
 {
-    _GpDbQuery_counter++;
-    std::cout << "[GpDbQuery::GpDbQuery]: counter = " << _GpDbQuery_counter << std::endl;
 }
 
 GpDbQuery::GpDbQuery
@@ -33,15 +27,10 @@ GpDbQuery::GpDbQuery
 iQueryStr(std::move(aQueryStr)),
 iValuesTypes(std::move(aValuesTypes))
 {
-    _GpDbQuery_counter++;
-    std::cout << "[GpDbQuery::GpDbQuery]: counter = " << _GpDbQuery_counter << std::endl;
 }
 
 GpDbQuery::~GpDbQuery (void) noexcept
 {
-    _GpDbQuery_counter--;
-    std::cout << "[GpDbQuery::~GpDbQuery]: counter = " << _GpDbQuery_counter << std::endl;
-
 }
 
 GpDbQuery&  GpDbQuery::NextInt16 (const s_int_16 aValue)

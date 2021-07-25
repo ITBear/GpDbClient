@@ -6,20 +6,13 @@
 
 namespace GPlatform {
 
-static int _GpDbManagerCatalog_counter = 0;
-
 GpDbManagerCatalog::GpDbManagerCatalog (void) noexcept
 {
-    _GpDbManagerCatalog_counter++;
-    std::cout << "[GpDbManagerCatalog::GpDbManagerCatalog]: counter = " << _GpDbManagerCatalog_counter << std::endl;
 }
 
 GpDbManagerCatalog::~GpDbManagerCatalog (void) noexcept
 {
     iManagers.Clear();
-
-    _GpDbManagerCatalog_counter--;
-    std::cout << "[GpDbManagerCatalog::~GpDbManagerCatalog]: counter = " << _GpDbManagerCatalog_counter << std::endl;
 }
 
 GpDbManagerCatalog& GpDbManagerCatalog::S (void) noexcept

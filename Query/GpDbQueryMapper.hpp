@@ -165,12 +165,12 @@ public:
                                                              const count_t          aRowId,
                                                              const count_t          aColOffset);
 
-    inline static void          SRethrowOnNoResult          (std::function<void()> aSqlFn,
-                                                             std::function<void()> aThrowFn);
+    /*inline static void            SRethrowOnNoResult          (std::function<void()> aSqlFn,
+                                                             std::function<void()> aThrowFn);*/
 
-    template<typename T >static
+    /*template<typename T >static
     T                           SRethrowOnNoResult          (std::function<T()> aSqlFn,
-                                                             std::function<void()> aThrowFn);
+                                                             std::function<void()> aThrowFn);*/
 
     template<typename T> static
     typename T::C::Vec::SP      SReadQueryResVecSP          (const GpDbQueryRes&    aDbQueryRes,
@@ -723,7 +723,7 @@ void    GpDbQueryMapper::SUpdateByKeysAsJsonb
     aDbConnGuard.Execute(dbQuerySP, 1_cnt);
 }
 
-void    GpDbQueryMapper::SRethrowOnNoResult
+/*void  GpDbQueryMapper::SRethrowOnNoResult
 (
     std::function<void()> aSqlFn,
     std::function<void()> aThrowFn
@@ -742,9 +742,9 @@ void    GpDbQueryMapper::SRethrowOnNoResult
             throw;
         }
     }
-}
+}*/
 
-template<typename T>
+/*template<typename T>
 T   GpDbQueryMapper::SRethrowOnNoResult
 (
     std::function<T()>      aSqlFn,
@@ -763,7 +763,7 @@ T   GpDbQueryMapper::SRethrowOnNoResult
 
         throw;
     }
-}
+}*/
 
 template<typename T>
 typename T::C::Vec::SP  GpDbQueryMapper::SReadQueryResVecSP

@@ -8,29 +8,18 @@
 
 namespace GPlatform {
 
-static int _GpDbConnectionGuard_counter = 0;
-
 GpDbConnectionGuard::GpDbConnectionGuard (void) noexcept
 {
-    _GpDbConnectionGuard_counter++;
-    std::cout << "[GpDbConnectionGuard::GpDbConnectionGuard]: counter = " << _GpDbConnectionGuard_counter << std::endl;
 }
 
 GpDbConnectionGuard::GpDbConnectionGuard (GpDbManager& aManager) noexcept:
 iManager(aManager)
 {
-    _GpDbConnectionGuard_counter++;
-
-    std::cout << "[GpDbConnectionGuard::GpDbConnectionGuard]: counter = " << _GpDbConnectionGuard_counter << std::endl;
 }
 
 GpDbConnectionGuard::~GpDbConnectionGuard (void) noexcept
 {
     ConnectionRelease();
-
-    _GpDbConnectionGuard_counter--;
-
-    std::cout << "[GpDbConnectionGuard::~GpDbConnectionGuard]: counter = " << _GpDbConnectionGuard_counter << std::endl;
 }
 
 void    GpDbConnectionGuard::CommitTransaction (void)

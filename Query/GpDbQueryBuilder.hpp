@@ -40,6 +40,7 @@ public:
     GpDbQueryBuilder&           COMMA               (void);
     GpDbQueryBuilder&           AND                 (void);
     GpDbQueryBuilder&           OR                  (void);
+    GpDbQueryBuilder&           NOT                 (void);
     GpDbQueryBuilder&           BITWISE_AND         (void);
     GpDbQueryBuilder&           BITWISE_OR          (void);
     GpDbQueryBuilder&           EQUAL               (void);
@@ -102,7 +103,7 @@ public:
     GpDbQueryBuilder&           VALUE               (std::string_view   aValue,
                                                      std::string_view   aTypeCast);
     GpDbQueryBuilder&           VALUE               (const SInt64 aValue);
-    GpDbQueryBuilder&           VALUE               (const bool aValue);
+    GpDbQueryBuilder&           VALUE               (const GpBool aValue);
     GpDbQueryBuilder&           VALUE               (const GpEnum&      aValue,
                                                      std::string_view   aTypeCast);
     GpDbQueryBuilder&           RAW                 (std::string_view aStr);
