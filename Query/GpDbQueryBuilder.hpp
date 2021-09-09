@@ -66,6 +66,7 @@ public:
     GpDbQueryBuilder&           BETWEEN             (void);
     GpDbQueryBuilder&           BETWEEN             (const GpDbQueryValType::EnumT aValueTypeA,
                                                      const GpDbQueryValType::EnumT aValueTypeB);
+    GpDbQueryBuilder&           LIKE                (const GpDbQueryValType::EnumT aValueType);
     GpDbQueryBuilder&           IS_NULL             (void);
 
     GpDbQueryBuilder&           VALUES_BEGIN        (void);
@@ -74,7 +75,7 @@ public:
 
     GpDbQueryBuilder&           WITH                (std::string_view aName);
     GpDbQueryBuilder&           SELECT              (void);
-    GpDbQueryBuilder&           FROM                (std::string_view aTableName);  
+    GpDbQueryBuilder&           FROM                (std::string_view aTableName);
     GpDbQueryBuilder&           FROM                (void);
     GpDbQueryBuilder&           WHERE               (void);
     GpDbQueryBuilder&           UPDATE              (std::string_view aTableName);
@@ -87,6 +88,7 @@ public:
     GpDbQueryBuilder&           OFFSET              (const GpDbQueryValType::EnumT aValueType);
     GpDbQueryBuilder&           RETURNING           (void);
     GpDbQueryBuilder&           FOR_UPDATE          (void);
+    GpDbQueryBuilder&           SKIP_LOCKED         (void);
     GpDbQueryBuilder&           DELETE_FROM         (std::string_view aTableName);
 
     GpDbQueryBuilder&           INNER_JOIN          (std::string_view aTableName);

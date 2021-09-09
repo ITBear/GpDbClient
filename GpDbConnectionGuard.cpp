@@ -26,14 +26,21 @@ void    GpDbConnectionGuard::CommitTransaction (void)
 {
     GpDbConnection& connection = ConnectionAcquire();
 
+    std::optional<std::exception_ptr> eptr;
+
     try
     {
-        connection.CommitTransaction();
-        ConnectionRelease();
+        connection.CommitTransaction();     
     } catch (...)
     {
-        ConnectionRelease();
-        throw;
+        eptr = std::current_exception();
+    }
+
+    ConnectionRelease();
+
+    if (eptr.has_value())
+    {
+        std::rethrow_exception(eptr.value());
     }
 }
 
@@ -41,14 +48,21 @@ void    GpDbConnectionGuard::RollbackTransaction (void)
 {
     GpDbConnection& connection = ConnectionAcquire();
 
+    std::optional<std::exception_ptr> eptr;
+
     try
     {
         connection.RollbackTransaction();
-        ConnectionRelease();
     } catch (...)
     {
-        ConnectionRelease();
-        throw;
+        eptr = std::current_exception();
+    }
+
+    ConnectionRelease();
+
+    if (eptr.has_value())
+    {
+        std::rethrow_exception(eptr.value());
     }
 }
 
@@ -62,18 +76,25 @@ GpDbQueryRes::SP    GpDbConnectionGuard::Execute
     GpDbConnection&         connection      = ConnectionAcquire();
     GpDbQueryRes::SP        res;
 
+    std::optional<std::exception_ptr> eptr;
+
     try
     {
         res = connection.Execute(queryPrepared, aMinResultRowsCount);
     } catch (...)
     {
-        ConnectionRelease();
-        throw;
+        eptr = std::current_exception();
     }
 
-    if (connection.IsTransactionOpen() == false)
+    if (   eptr.has_value()
+        || (connection.IsTransactionOpen() == false))
     {
         ConnectionRelease();
+
+        if (eptr.has_value())
+        {
+            std::rethrow_exception(eptr.value());
+        }
     }
 
     return res;

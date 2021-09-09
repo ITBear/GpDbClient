@@ -323,8 +323,7 @@ GpDbQueryBuilder&   GpDbQueryBuilder::BETWEEN (void)
     CheckForSpace();
 
     iQueryStr
-        .append("BETWEEN"_sv)
-        .append(" "_sv);
+        .append("BETWEEN "_sv);
 
     return *this;
 }
@@ -336,6 +335,18 @@ GpDbQueryBuilder&   GpDbQueryBuilder::BETWEEN
 )
 {
     BETWEEN().VALUE(aValueTypeA).AND().VALUE(aValueTypeB);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::LIKE (const GpDbQueryValType::EnumT aValueType)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("LIKE "_sv)
+        .append(AddValueBind(aValueType))
+        .append(" "_sv);
 
     return *this;
 }
@@ -542,6 +553,17 @@ GpDbQueryBuilder&   GpDbQueryBuilder::FOR_UPDATE (void)
 
     iQueryStr
         .append("FOR UPDATE"_sv)
+        .append(" "_sv);
+
+    return *this;
+}
+
+GpDbQueryBuilder&   GpDbQueryBuilder::SKIP_LOCKED (void)
+{
+    CheckForSpace();
+
+    iQueryStr
+        .append("SKIP LOCKED"_sv)
         .append(" "_sv);
 
     return *this;

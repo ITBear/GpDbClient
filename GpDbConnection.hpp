@@ -44,6 +44,8 @@ public:
     virtual GpDbQueryRes::SP    Execute                 (GpDbQueryPrepared::CSP aQueryPrepared,
                                                          const count_t          aMinResultRowsCount) = 0;
 
+    virtual std::string         StrEscape               (std::string_view aStr) const = 0;
+
     virtual bool                Validate                (void) const noexcept = 0;
 
 protected:
