@@ -4,8 +4,6 @@
 #include "GpDbManagerCatalog.hpp"
 #include "GpDbException.hpp"
 
-#include <iostream>
-
 namespace GPlatform {
 
 GpDbConnectionGuard::GpDbConnectionGuard (void) noexcept
@@ -30,7 +28,7 @@ void    GpDbConnectionGuard::CommitTransaction (void)
 
     try
     {
-        connection.CommitTransaction();     
+        connection.CommitTransaction();
     } catch (...)
     {
         eptr = std::current_exception();

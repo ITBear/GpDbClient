@@ -2,8 +2,6 @@
 #include "GpDbManager.hpp"
 #include "GpDbDriverFactory.hpp"
 
-#include <iostream>
-
 namespace GPlatform {
 
 GpDbManagerCatalog::GpDbManagerCatalog (void) noexcept

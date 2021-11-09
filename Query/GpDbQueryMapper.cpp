@@ -25,7 +25,7 @@ s_int_64    GpDbQueryMapper::SSelectPagingStartPoint
 
     const auto& cacheVal = GpDbQueryMapper::SMapperCache().Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             GpDbQueryBuilder builder;
@@ -91,7 +91,7 @@ s_int_64    GpDbQueryMapper::SSelectPagingStartPoint
 
     const auto& cacheVal = GpDbQueryMapper::SMapperCache().Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             GpDbQueryBuilder builder;
@@ -188,7 +188,7 @@ void    GpDbQueryMapper::SInsertAsRow
 {
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             GpDbQueryBuilder builder;
@@ -233,7 +233,7 @@ void    GpDbQueryMapper::SInsertAsRowVec
 
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             GpDbQueryBuilder builder;
@@ -269,7 +269,7 @@ void    GpDbQueryMapper::SInsertAsJsonb
 {
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             GpDbQueryBuilder builder;
@@ -424,7 +424,7 @@ count_t GpDbQueryMapper::SRowToStruct
             } break;
             case GpType::ENUM:      propInfo.Value_Enum(aStruct).FromString(aDbQueryRes.GetStr(aRowId, colId++, std::nullopt));break;
             case GpType::ENUM_FLAGS:propInfo.Value_EnumFlags(aStruct).FromStringArray(aDbQueryRes.GetStrArray(aRowId, colId++, std::nullopt));break;
-            case GpType::NOT_SET:               
+            case GpType::NOT_SET:
             default:
             {
                 THROW_GPE("Unsupported type NOT_SET"_sv); break;

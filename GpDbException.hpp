@@ -12,7 +12,7 @@ public:
 
 private:
                             GpDbException       (void) noexcept = delete;
-                            GpDbException       (const GpDbException&   aException) noexcept = delete;
+                            GpDbException       (const GpDbException& aException) noexcept = delete;
 
     GpDbException&          operator=           (const GpDbException& aException) noexcept = delete;
     GpDbException&          operator=           (GpDbException&& aException) noexcept = delete;

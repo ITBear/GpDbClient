@@ -1,7 +1,5 @@
 #include "GpDbQuery.hpp"
 
-#include <iostream>
-
 namespace GPlatform {
 
 GpDbQuery::GpDbQuery (std::string_view aQueryStr):
@@ -65,13 +63,13 @@ GpDbQuery&  GpDbQuery::NextFloat (const float aValue)
 
 GpDbQuery&  GpDbQuery::NextStrValue (std::string_view aValue)
 {
-    _MoveNext<GpDbQueryValStrValue, GpDbQueryValType::STRING_VALUE>(std::string(aValue));
+    _MoveNext<GpDbQueryValStrValue, GpDbQueryValType::STRING_VALUE>(GpDbQueryValStrValue(std::string(aValue)));
     return *this;
 }
 
 GpDbQuery&  GpDbQuery::NextStrValue (std::string&& aValue)
 {
-    _MoveNext<GpDbQueryValStrValue, GpDbQueryValType::STRING_VALUE>(std::move(aValue));
+    _MoveNext<GpDbQueryValStrValue, GpDbQueryValType::STRING_VALUE>(GpDbQueryValStrValue(std::move(aValue)));
     return *this;
 }
 
@@ -110,25 +108,25 @@ GpDbQuery&  GpDbQuery::NextStrValueArray (const GpEnumFlags& aValue)
 
 GpDbQuery&  GpDbQuery::NextStrName (std::string_view aValue)
 {
-    _MoveNext<GpDbQueryValStrName, GpDbQueryValType::STRING_NAME>(std::string(aValue));
+    _MoveNext<GpDbQueryValStrName, GpDbQueryValType::STRING_NAME>(GpDbQueryValStrName(std::string(aValue)));
     return *this;
 }
 
 GpDbQuery&  GpDbQuery::NextStrName (std::string&& aValue)
 {
-    _MoveNext<GpDbQueryValStrName, GpDbQueryValType::STRING_NAME>(std::move(aValue));
+    _MoveNext<GpDbQueryValStrName, GpDbQueryValType::STRING_NAME>(GpDbQueryValStrName(std::move(aValue)));
     return *this;
 }
 
 GpDbQuery&  GpDbQuery::NextStrJson (std::string_view aValue)
 {
-    _MoveNext<GpDbQueryValStrJson, GpDbQueryValType::STRING_JSON>(std::string(aValue));
+    _MoveNext<GpDbQueryValStrJson, GpDbQueryValType::STRING_JSON>(GpDbQueryValStrJson(std::string(aValue)));
     return *this;
 }
 
 GpDbQuery&  GpDbQuery::NextStrJson (std::string&& aValue)
 {
-    _MoveNext<GpDbQueryValStrJson, GpDbQueryValType::STRING_JSON>(std::move(aValue));
+    _MoveNext<GpDbQueryValStrJson, GpDbQueryValType::STRING_JSON>(GpDbQueryValStrJson(std::move(aValue)));
     return *this;
 }
 

@@ -19,7 +19,7 @@ public:
                                 GpDbConnectionGuard     (GpDbManager& aManager) noexcept;
                                 ~GpDbConnectionGuard    (void) noexcept;
 
-    void                        BeginTransaction        (GpDbTransactionIsolation::EnumT aIsolationLevel) {ConnectionAcquire().BeginTransaction(aIsolationLevel);}
+    inline void                 BeginTransaction        (GpDbTransactionIsolation::EnumT aIsolationLevel);
     void                        CommitTransaction       (void);
     void                        RollbackTransaction     (void);
 
@@ -37,5 +37,10 @@ private:
     ManagerRefT                 iManager;
     GpDbConnection::SP          iConnection;
 };
+
+void    GpDbConnectionGuard::BeginTransaction (GpDbTransactionIsolation::EnumT aIsolationLevel)
+{
+    ConnectionAcquire().BeginTransaction(aIsolationLevel);
+}
 
 }//GPlatform

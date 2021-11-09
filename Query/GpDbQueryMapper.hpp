@@ -200,7 +200,7 @@ void    GpDbQueryMapper::SSetPagingOrder
 
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             //UPDATE
@@ -294,7 +294,7 @@ void    GpDbQueryMapper::SSetPagingOrderRow
 
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             //UPDATE
@@ -391,7 +391,7 @@ s_int_64    GpDbQueryMapper::SSelectByKeysAsRow
 
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             GpDbQueryBuilder builder;
@@ -459,7 +459,7 @@ void    GpDbQueryMapper::SUpdateByKeysAsRow
 
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             GpDbQueryBuilder builder;
@@ -511,7 +511,7 @@ void    GpDbQueryMapper::SSetPagingOrderJsonb
 
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             //UPDATE
@@ -607,7 +607,7 @@ s_int_64    GpDbQueryMapper::SSelectByKeysAsJsonb
 
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             GpDbQueryBuilder builder;
@@ -659,7 +659,7 @@ GpDbQueryMapper::SSelectByKeysAsJsonb
     typename T::SP res = MakeSP<T>();
     const s_int_64 version = SSelectByKeysAsJsonb<KeysT...>
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         res.Vn(),
         aTablePath,
         aDbConnGuard,
@@ -687,7 +687,7 @@ void    GpDbQueryMapper::SUpdateByKeysAsJsonb
 
     const auto& cacheVal = sMapperCache.Get
     (
-        aCacheUID,
+        GpDbQueryCacheUID(aCacheUID),
         [&]()
         {
             GpDbQueryBuilder builder;

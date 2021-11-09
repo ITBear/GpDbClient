@@ -1,7 +1,5 @@
 #include "GpDbDriver.hpp"
 
-#include <iostream>
-
 namespace GPlatform {
 
 GpDbDriver::GpDbDriver

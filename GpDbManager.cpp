@@ -3,8 +3,6 @@
 #include "GpDbConnection.hpp"
 #include "GpDbManagerCfgDesc.hpp"
 
-#include <iostream>
-
 namespace GPlatform {
 
 GpDbManager::GpDbManager
