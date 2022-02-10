@@ -160,6 +160,12 @@ GpDbQuery&  GpDbQuery::NextNULL (void)
     return *this;
 }
 
+GpDbQuery&  GpDbQuery::NextStruct (const GpTypeStructBase& aStruct)
+{
+    //TODO: implement
+    THROW_GPE_NOT_IMPLEMENTED();
+}
+
 s_int_16    GpDbQuery::Int16 (const count_t aId) const
 {
     return std::get<s_int_16>(iValues.at(aId.As<size_t>()));
@@ -218,6 +224,12 @@ bool    GpDbQuery::Boolean (const count_t aId) const
 const GpBytesArray& GpDbQuery::BLOB (const count_t aId) const
 {
     return std::get<GpBytesArray>(iValues.at(aId.As<size_t>()));
+}
+
+void    GpDbQuery::Struct (GpTypeStructBase& aStructOut) const
+{
+    //TODO: implement
+    THROW_GPE_NOT_IMPLEMENTED();
 }
 
 }//namespace GPlatform

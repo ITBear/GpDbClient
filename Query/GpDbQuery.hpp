@@ -48,6 +48,8 @@ public:
     GpDbQuery&                      NextBoolean         (const bool                         aValue);
     GpDbQuery&                      NextNULL            (void);
 
+    GpDbQuery&                      NextStruct          (const GpTypeStructBase& aStruct);
+
     template<GpDbQueryValType::EnumT E,
              typename                T>
     GpDbQuery&                      Next            (T aValue);
@@ -70,6 +72,8 @@ public:
     const GpUUID&                   UUID            (const count_t aId) const;
     bool                            Boolean         (const count_t aId) const;
     const GpBytesArray&             BLOB            (const count_t aId) const;
+
+    void                            Struct          (GpTypeStructBase& aStructOut) const;
 
 private:
     template<typename                   T,

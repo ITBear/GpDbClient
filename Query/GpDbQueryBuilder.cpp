@@ -754,10 +754,10 @@ GpDbQueryBuilder&   GpDbQueryBuilder::STRUCT_PARAM_NAMES
     {
         if (aTableName.length() > 0)
         {
-            return aTableName + "."_sv + i->name;
+            return aTableName + ".\""_sv + i->name + "\"";
         } else
         {
-            return i->name;
+            return "\""_sv + i->name + "\"";
         }
     };
 
